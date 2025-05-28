@@ -12,7 +12,14 @@
 
 package element
 
-import ()
+import (
+	fmt "fmt"
+	mat "math"
+	reg "regexp"
+	stc "strconv"
+	uni "unicode"
+	utf "unicode/utf8"
+)
 
 // CLASS INTERFACE
 
@@ -25,26 +32,29 @@ func GlyphClass() GlyphClassLike {
 // Constructor Methods
 
 func (c *glyphClass_) Glyph(
-	intrinsic rune,
+	rune_ rune,
 ) GlyphLike {
-	var instance = glyph_(intrinsic)
-	return instance
+	return glyph_(rune_)
 }
 
 func (c *glyphClass_) GlyphFromInteger(
 	integer int64,
 ) GlyphLike {
-	var instance GlyphLike
-	// TBD - Add the constructor implementation.
-	return instance
+	return glyph_(integer)
 }
 
 func (c *glyphClass_) GlyphFromString(
 	string_ string,
 ) GlyphLike {
-	var instance GlyphLike
-	// TBD - Add the constructor implementation.
-	return instance
+	if !glyphMatcher_.MatchString(string_) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the glyph constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	var rune_, _ = utf.DecodeRuneInString(string_[1 : len(string_)-1])
+	return glyph_(rune_)
 }
 
 // Constant Methods
@@ -59,20 +69,16 @@ func (c *glyphClass_) Maximum() GlyphLike {
 
 // Function Methods
 
-func (c *glyphClass_) ToLowercase(
-	glyph GlyphLike,
-) GlyphLike {
-	var result_ GlyphLike
-	// TBD - Add the function implementation.
-	return result_
+func (c *glyphClass_) ToLowercase(glyph GlyphLike) GlyphLike {
+	var rune_ = glyph.GetIntrinsic()
+	rune_ = uni.ToLower(rune_)
+	return glyph_(rune_)
 }
 
-func (c *glyphClass_) ToUppercase(
-	glyph GlyphLike,
-) GlyphLike {
-	var result_ GlyphLike
-	// TBD - Add the function implementation.
-	return result_
+func (c *glyphClass_) ToUppercase(glyph GlyphLike) GlyphLike {
+	var rune_ = glyph.GetIntrinsic()
+	rune_ = uni.ToUpper(rune_)
+	return glyph_(rune_)
 }
 
 // INSTANCE INTERFACE
@@ -92,28 +98,40 @@ func (v glyph_) GetIntrinsic() rune {
 // Discrete Methods
 
 func (v glyph_) AsBoolean() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return v > -1
 }
 
 func (v glyph_) AsInteger() int64 {
-	var result_ int64
-	// TBD - Add the method implementation.
-	return result_
+	return int64(v)
 }
 
 // Lexical Methods
 
 func (v glyph_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	return stc.Quote(string([]rune{rune(v)}))
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
+
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+const (
+	escape_  = "(?:\\\\((?:" + unicode_ + ")|[abfnrtv\\\\]))"
+	control_ = "\\p{Cc}"
+	unicode_ = "(?:(u(?:" + base16_ + "){4})|(U(?:" + base16_ + "){8}))"
+	base16_  = "(?:(?:" + base10_ + ")|[a-f])"
+)
+
+var glyphMatcher_ = reg.MustCompile(
+	"^(?:'((?:" + escape_ + ")|[^" + control_ + "])')",
+)
 
 // Instance Structure
 
@@ -135,6 +153,6 @@ func glyphClass() *glyphClass_ {
 
 var glyphClassReference_ = &glyphClass_{
 	// Initialize the class constants.
-	// minimum_: constantValue,
-	// maximum_: constantValue,
+	minimum_: glyph_(0),
+	maximum_: glyph_(mat.MaxInt32),
 }

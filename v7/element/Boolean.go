@@ -12,7 +12,11 @@
 
 package element
 
-import ()
+import (
+	fmt "fmt"
+	reg "regexp"
+	stc "strconv"
+)
 
 // CLASS INTERFACE
 
@@ -25,18 +29,25 @@ func BooleanClass() BooleanClassLike {
 // Constructor Methods
 
 func (c *booleanClass_) Boolean(
-	intrinsic bool,
+	boolean bool,
 ) BooleanLike {
-	var instance = boolean_(intrinsic)
+	var instance = boolean_(boolean)
 	return instance
 }
 
 func (c *booleanClass_) BooleanFromString(
 	string_ string,
 ) BooleanLike {
-	var instance BooleanLike
-	// TBD - Add the constructor implementation.
-	return instance
+	// Our booleans are more restrictive than the Go strconv package.
+	if !booleanMatcher_.MatchString(string_) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the boolean constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	var boolean, _ = stc.ParseBool(string_)
+	return boolean_(boolean)
 }
 
 // Constant Methods
@@ -54,8 +65,7 @@ func (c *booleanClass_) True() BooleanLike {
 func (c *booleanClass_) Not(
 	boolean BooleanLike,
 ) BooleanLike {
-	var result_ BooleanLike
-	// TBD - Add the function implementation.
+	var result_ = boolean_(!boolean.AsBoolean())
 	return result_
 }
 
@@ -63,26 +73,23 @@ func (c *booleanClass_) And(
 	first BooleanLike,
 	second BooleanLike,
 ) BooleanLike {
-	var result_ BooleanLike
-	// TBD - Add the function implementation.
+	var result_ = boolean_(first.AsBoolean() && second.AsBoolean())
 	return result_
 }
 
-func (c *booleanClass_) Sans(
+func (c *booleanClass_) San(
 	first BooleanLike,
 	second BooleanLike,
 ) BooleanLike {
-	var result_ BooleanLike
-	// TBD - Add the function implementation.
+	var result_ = boolean_(first.AsBoolean() && !second.AsBoolean())
 	return result_
 }
 
-func (c *booleanClass_) Or(
+func (c *booleanClass_) Ior(
 	first BooleanLike,
 	second BooleanLike,
 ) BooleanLike {
-	var result_ BooleanLike
-	// TBD - Add the function implementation.
+	var result_ = boolean_(first.AsBoolean() || second.AsBoolean())
 	return result_
 }
 
@@ -90,8 +97,7 @@ func (c *booleanClass_) Xor(
 	first BooleanLike,
 	second BooleanLike,
 ) BooleanLike {
-	var result_ BooleanLike
-	// TBD - Add the function implementation.
+	var result_ = c.Ior(c.San(first, second), c.San(second, first))
 	return result_
 }
 
@@ -112,28 +118,37 @@ func (v boolean_) GetIntrinsic() bool {
 // Discrete Methods
 
 func (v boolean_) AsBoolean() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
+	var result_ = bool(v)
 	return result_
 }
 
 func (v boolean_) AsInteger() int64 {
 	var result_ int64
-	// TBD - Add the method implementation.
+	if v {
+		result_ = 1
+	}
 	return result_
 }
 
 // Lexical Methods
 
 func (v boolean_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
+	var result_ = stc.FormatBool(bool(v))
 	return result_
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
+
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+var booleanMatcher_ = reg.MustCompile("^(?:false|true)")
 
 // Instance Structure
 
@@ -155,6 +170,6 @@ func booleanClass() *booleanClass_ {
 
 var booleanClassReference_ = &booleanClass_{
 	// Initialize the class constants.
-	// false_: constantValue,
-	// true_: constantValue,
+	false_: boolean_(false),
+	true_:  boolean_(true),
 }

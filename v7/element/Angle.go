@@ -12,7 +12,13 @@
 
 package element
 
-import ()
+import (
+	fmt "fmt"
+	uti "github.com/craterdog/go-missing-utilities/v7"
+	mat "math"
+	reg "regexp"
+	stc "strconv"
+)
 
 // CLASS INTERFACE
 
@@ -25,18 +31,33 @@ func AngleClass() AngleClassLike {
 // Constructor Methods
 
 func (c *angleClass_) Angle(
-	intrinsic float64,
+	radians float64,
 ) AngleLike {
-	var instance = angle_(intrinsic)
-	return instance
+	return angle_(radians)
 }
 
 func (c *angleClass_) AngleFromString(
 	string_ string,
 ) AngleLike {
-	var instance AngleLike
-	// TBD - Add the constructor implementation.
-	return instance
+	var matches = angleMatcher_.FindStringSubmatch(string_)
+	if uti.IsUndefined(matches) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	var float float64
+	var match = matches[1] // Strip off the leading '~' character.
+	switch match {
+	case "pi", "π":
+		float = mat.Pi
+	case "tau", "τ":
+		float = mat.Pi * 2.0
+	default:
+		float, _ = stc.ParseFloat(match, 64)
+	}
+	return angle_(float)
 }
 
 // Constant Methods
@@ -66,8 +87,7 @@ func (c *angleClass_) Tau() AngleLike {
 func (c *angleClass_) Inverse(
 	angle AngleLike,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(angle.AsFloat() - angleClass().Pi().AsFloat())
 	return result_
 }
 
@@ -75,8 +95,7 @@ func (c *angleClass_) Sum(
 	first AngleLike,
 	second AngleLike,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(first.AsFloat() + second.AsFloat())
 	return result_
 }
 
@@ -84,8 +103,7 @@ func (c *angleClass_) Difference(
 	first AngleLike,
 	second AngleLike,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(first.AsFloat() - second.AsFloat())
 	return result_
 }
 
@@ -93,32 +111,28 @@ func (c *angleClass_) Scaled(
 	angle AngleLike,
 	factor float64,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(angle.AsFloat() * factor)
 	return result_
 }
 
 func (c *angleClass_) Complement(
 	angle AngleLike,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(angleClass().Pi().AsFloat()/2.0 - angle.AsFloat())
 	return result_
 }
 
 func (c *angleClass_) Supplement(
 	angle AngleLike,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(angleClass().Pi().AsFloat() - angle.AsFloat())
 	return result_
 }
 
 func (c *angleClass_) Conjugate(
 	angle AngleLike,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(-angle.AsFloat())
 	return result_
 }
 
@@ -126,15 +140,35 @@ func (c *angleClass_) Cosine(
 	angle AngleLike,
 ) float64 {
 	var result_ float64
-	// TBD - Add the function implementation.
+	switch angle.AsFloat() {
+	case 0.0:
+		result_ = 1.0
+	case mat.Pi * 0.25:
+		result_ = 0.5 * mat.Sqrt2
+	case mat.Pi * 0.5:
+		result_ = 0.0
+	case mat.Pi * 0.75:
+		result_ = -0.5 * mat.Sqrt2
+	case mat.Pi:
+		result_ = -1.0
+	case mat.Pi * 1.25:
+		result_ = -0.5 * mat.Sqrt2
+	case mat.Pi * 1.5:
+		result_ = 0.0
+	case mat.Pi * 1.75:
+		result_ = 0.5 * mat.Sqrt2
+	case mat.Pi * 2.0:
+		result_ = 1.0
+	default:
+		result_ = mat.Cos(angle.AsFloat())
+	}
 	return result_
 }
 
 func (c *angleClass_) ArcCosine(
 	x float64,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(mat.Acos(x))
 	return result_
 }
 
@@ -142,15 +176,35 @@ func (c *angleClass_) Sine(
 	angle AngleLike,
 ) float64 {
 	var result_ float64
-	// TBD - Add the function implementation.
+	switch angle.AsFloat() {
+	case 0.0:
+		result_ = 0.0
+	case mat.Pi * 0.25:
+		result_ = 0.5 * mat.Sqrt2
+	case mat.Pi * 0.5:
+		result_ = 1.0
+	case mat.Pi * 0.75:
+		result_ = 0.5 * mat.Sqrt2
+	case mat.Pi:
+		result_ = 0.0
+	case mat.Pi * 1.25:
+		result_ = -0.5 * mat.Sqrt2
+	case mat.Pi * 1.5:
+		result_ = -1.0
+	case mat.Pi * 1.75:
+		result_ = -0.5 * mat.Sqrt2
+	case mat.Pi * 2.0:
+		result_ = 0.0
+	default:
+		result_ = mat.Sin(angle.AsFloat())
+	}
 	return result_
 }
 
 func (c *angleClass_) ArcSine(
 	y float64,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(mat.Asin(y))
 	return result_
 }
 
@@ -158,7 +212,28 @@ func (c *angleClass_) Tangent(
 	angle AngleLike,
 ) float64 {
 	var result_ float64
-	// TBD - Add the function implementation.
+	switch angle.AsFloat() {
+	case 0.0:
+		result_ = 0.0
+	case mat.Pi * 0.25:
+		result_ = 1.0
+	case mat.Pi * 0.5:
+		result_ = mat.Inf(1)
+	case mat.Pi * 0.75:
+		result_ = -1.0
+	case mat.Pi:
+		result_ = 0.0
+	case mat.Pi * 1.25:
+		result_ = 1.0
+	case mat.Pi * 1.5:
+		result_ = mat.Inf(1)
+	case mat.Pi * 1.75:
+		result_ = -1.0
+	case mat.Pi * 2.0:
+		result_ = 0.0
+	default:
+		result_ = mat.Tan(angle.AsFloat())
+	}
 	return result_
 }
 
@@ -166,8 +241,7 @@ func (c *angleClass_) ArcTangent(
 	x float64,
 	y float64,
 ) AngleLike {
-	var result_ AngleLike
-	// TBD - Add the function implementation.
+	var result_ = c.angleFromFloat(mat.Atan2(y, x))
 	return result_
 }
 
@@ -181,12 +255,6 @@ func (v angle_) GetClass() AngleClassLike {
 
 func (v angle_) GetIntrinsic() float64 {
 	return float64(v)
-}
-
-func (v angle_) IsZero() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
 }
 
 // Attribute Methods
@@ -218,40 +286,98 @@ func (v angle_) GetParts() (
 // Continuous Methods
 
 func (v angle_) AsFloat() float64 {
-	var result_ float64
-	// TBD - Add the method implementation.
-	return result_
+	return float64(v)
 }
 
 func (v angle_) IsZero() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return v == angleClass().zero_ || v == angleClass().tau_
 }
 
 func (v angle_) IsInfinite() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return false
 }
 
 func (v angle_) IsUndefined() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return false
 }
 
 // Lexical Methods
 
 func (v angle_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
+	var result_ = angleClass().stringFromAngle(v)
 	return result_
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (c *angleClass_) angleFromFloat(float float64) angle_ {
+	float = c.normalizeValue(float)
+	float = c.lockPhase(float)
+	return angle_(float)
+}
+
+func (c *angleClass_) lockPhase(value float64) float64 {
+	var pi = angleClass().Pi().GetIntrinsic()
+	var value32 = float32(value)
+	switch {
+	case mat.Abs(value) <= 1.2246467991473515e-16:
+		value = 0
+	case value32 == float32(0.5*pi):
+		value = 0.5 * pi
+	case value32 == float32(pi):
+		value = pi
+	case value32 == float32(1.5*pi):
+		value = 1.5 * pi
+	}
+	return value
+}
+
+func (c *angleClass_) normalizeValue(value float64) float64 {
+	var tau = angleClass().Tau().GetIntrinsic()
+	if value < -tau || value >= tau {
+		// Normalize the value to the range [-τ..τ).
+		value = mat.Remainder(value, tau)
+	}
+	if value < 0.0 {
+		// Normalize the value to the range [0..τ).
+		value = value + tau
+	}
+	return value
+}
+
+func (c *angleClass_) stringFromAngle(angle angle_) string {
+	var string_ string
+	switch angle {
+	case c.pi_:
+		string_ = "~π"
+	case c.tau_:
+		string_ = "~τ"
+	default:
+		string_ = "~" + stc.FormatFloat(float64(angle), 'G', -1, 64)
+	}
+	return string_
+}
+
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+const (
+	amplitude_ = "(?:(0(?:" + fraction_ + ")|(?:" + ordinal_ + ")(?:" +
+		fraction_ + ")?)(?:" + exponent_ + ")?)"
+	fraction_ = "(?:\\.(?:" + base10_ + ")+)"
+	ordinal_  = "(?:[1-9](?:" + base10_ + ")*)"
+	exponent_ = "(?:E(?:" + sign_ + ")?(?:" + ordinal_ + "))"
+	base10_   = "(?:[0-9])"
+	sign_     = "(?:\\+|-)"
+)
+
+var angleMatcher_ = reg.MustCompile("^(?:~(0|(?:" + amplitude_ + ")|pi|π|tau|τ))")
 
 // Instance Structure
 
@@ -276,9 +402,7 @@ func angleClass() *angleClass_ {
 
 var angleClassReference_ = &angleClass_{
 	// Initialize the class constants.
-	// minimum_: constantValue,
-	// maximum_: constantValue,
-	// zero_: constantValue,
-	// pi_: constantValue,
-	// tau_: constantValue,
+	zero_: angle_(0.0),
+	pi_:   angle_(mat.Pi),
+	tau_:  angle_(2.0 * mat.Pi),
 }

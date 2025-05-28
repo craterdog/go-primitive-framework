@@ -142,11 +142,11 @@ type BooleanClassLike interface {
 		first BooleanLike,
 		second BooleanLike,
 	) BooleanLike
-	Sans(
+	San(
 		first BooleanLike,
 		second BooleanLike,
 	) BooleanLike
-	Or(
+	Ior(
 		first BooleanLike,
 		second BooleanLike,
 	) BooleanLike
@@ -198,25 +198,6 @@ type DurationClassLike interface {
 }
 
 /*
-FloatClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-float-like concrete class.
-*/
-type FloatClassLike interface {
-	// Constructor Methods
-	Float(
-		intrinsic float64,
-	) FloatLike
-	FloatFromString(
-		string_ string,
-	) FloatLike
-
-	// Constant Methods
-	Minimum() FloatLike
-	Maximum() FloatLike
-}
-
-/*
 GlyphClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 glyph-like concrete class.
@@ -244,25 +225,6 @@ type GlyphClassLike interface {
 	ToUppercase(
 		glyph GlyphLike,
 	) GlyphLike
-}
-
-/*
-IntegerClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-integer-like concrete class.
-*/
-type IntegerClassLike interface {
-	// Constructor Methods
-	Integer(
-		intrinsic int64,
-	) IntegerLike
-	IntegerFromString(
-		string_ string,
-	) IntegerLike
-
-	// Constant Methods
-	Minimum() IntegerLike
-	Maximum() IntegerLike
 }
 
 /*
@@ -457,7 +419,6 @@ type AngleLike interface {
 	// Principal Methods
 	GetClass() AngleClassLike
 	GetIntrinsic() float64
-	IsZero() bool
 
 	// Aspect Interfaces
 	Angular
@@ -515,22 +476,6 @@ type DurationLike interface {
 }
 
 /*
-FloatLike is an instance interface that defines the complete set of
-instance attributes, abstractions and methods that must be supported by each
-instance of a float-like elemental class.
-*/
-type FloatLike interface {
-	// Principal Methods
-	GetClass() FloatClassLike
-	GetIntrinsic() float64
-
-	// Aspect Interfaces
-	Continuous
-	Lexical
-	Polarized
-}
-
-/*
 GlyphLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
 instance of a glyph-like elemental class.
@@ -543,22 +488,6 @@ type GlyphLike interface {
 	// Aspect Interfaces
 	Discrete
 	Lexical
-}
-
-/*
-IntegerLike is an instance interface that defines the complete set of
-instance attributes, abstractions and methods that must be supported by each
-instance of a integer-like elemental class.
-*/
-type IntegerLike interface {
-	// Principal Methods
-	GetClass() IntegerClassLike
-	GetIntrinsic() int64
-
-	// Aspect Interfaces
-	Discrete
-	Lexical
-	Polarized
 }
 
 /*

@@ -12,7 +12,11 @@
 
 package element
 
-import ()
+import (
+	fmt "fmt"
+	reg "regexp"
+	sts "strings"
+)
 
 // CLASS INTERFACE
 
@@ -25,10 +29,16 @@ func CitationClass() CitationClassLike {
 // Constructor Methods
 
 func (c *citationClass_) Citation(
-	intrinsic string,
+	string_ string,
 ) CitationLike {
-	var instance = citation_(intrinsic)
-	return instance
+	if !citationMatcher_.MatchString(string_) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the citation constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	return citation_(string_)
 }
 
 // Constant Methods
@@ -52,30 +62,45 @@ func (v citation_) GetIntrinsic() string {
 // Lexical Methods
 
 func (v citation_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	return string(v)
 }
 
 // Named Methods
 
 func (v citation_) GetName() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var index = sts.LastIndex(string(v), "@")
+	return string(v[:index])
 }
 
 // Versioned Methods
 
 func (v citation_) GetVersion() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var index = sts.LastIndex(string(v), "@")
+	return string(v[index+1:])
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
+
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+const (
+	name_       = "(?:(/(?:" + identifier_ + "))+)"
+	identifier_ = "(?:(?:" + letter_ + ")((?:" + letter_ + ")|" + digit_ + ")*)"
+	version_    = "(?:v(?:" + ordinal_ + ")(\\.(?:" + ordinal_ + "))*)"
+	letter_     = "(?:" + lower_ + "|" + upper_ + ")"
+	lower_      = "\\p{Ll}"
+	upper_      = "\\p{Lu}"
+	digit_      = "\\p{Nd}"
+)
+
+var citationMatcher_ = reg.MustCompile("^(?:(?:" + name_ + ")@(?:" + version_ + "))")
 
 // Instance Structure
 
