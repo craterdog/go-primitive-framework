@@ -42,7 +42,7 @@ func (c *angleClass_) AngleFromString(
 	var matches = angleMatcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
-			"An illegal string was passed to the constructor method: %s",
+			"An illegal string was passed to the angle constructor method: %s",
 			string_,
 		)
 		panic(message)
@@ -360,6 +360,7 @@ func (c *angleClass_) stringFromAngle(angle angle_) string {
 	return string_
 }
 
+// This constructor creates a new number from the specified polar values.
 // NOTE:
 // These private constants are used to define the private regular expression
 // matcher that is used to match legal string patterns for this intrinsic type.
@@ -368,16 +369,12 @@ func (c *angleClass_) stringFromAngle(angle angle_) string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	amplitude_ = "(?:(0(?:" + fraction_ + ")|(?:" + ordinal_ + ")(?:" +
-		fraction_ + ")?)(?:" + exponent_ + ")?)"
-	fraction_ = "(?:\\.(?:" + base10_ + ")+)"
-	ordinal_  = "(?:[1-9](?:" + base10_ + ")*)"
-	exponent_ = "(?:E(?:" + sign_ + ")?(?:" + ordinal_ + "))"
-	base10_   = "(?:[0-9])"
-	sign_     = "(?:\\+|-)"
+	phase_ = "(?:~(0|(?:" + amplitude_ + ")))"
 )
 
-var angleMatcher_ = reg.MustCompile("^(?:~(0|(?:" + amplitude_ + ")|pi|π|tau|τ))")
+var angleMatcher_ = reg.MustCompile(
+	"^" + phase_,
+)
 
 // Instance Structure
 

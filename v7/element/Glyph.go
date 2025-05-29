@@ -123,10 +123,10 @@ func (v glyph_) AsString() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	escape_  = "(?:\\\\((?:" + unicode_ + ")|[abfnrtv\\\\]))"
-	control_ = "\\p{Cc}"
-	unicode_ = "(?:(u(?:" + base16_ + "){4})|(U(?:" + base16_ + "){8}))"
 	base16_  = "(?:(?:" + base10_ + ")|[a-f])"
+	control_ = "\\p{Cc}"
+	escape_  = "(?:\\\\((?:" + unicode_ + ")|[abfnrtv\\\\]))"
+	unicode_ = "(?:(u(?:" + base16_ + "){4})|(U(?:" + base16_ + "){8}))"
 )
 
 var glyphMatcher_ = reg.MustCompile(

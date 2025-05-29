@@ -269,14 +269,18 @@ number-like concrete class.
 */
 type NumberClassLike interface {
 	// Constructor Methods
-	Complex(
+	Number(
 		intrinsic complex128,
 	) NumberLike
-	ComplexFromPolar(
+	NumberFromPolar(
 		magnitude float64,
 		phase float64,
 	) NumberLike
-	ComplexFromString(
+	NumberFromRectangular(
+		real_ float64,
+		imaginary float64,
+	) NumberLike
+	NumberFromString(
 		string_ string,
 	) NumberLike
 
@@ -609,7 +613,6 @@ Complex is an aspect interface that defines a set of method signatures
 that must be supported by each instance of a complex elemental class.
 */
 type Complex interface {
-	AsComplex() complex128
 	GetReal() float64
 	GetImaginary() float64
 	GetMagnitude() float64

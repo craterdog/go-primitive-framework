@@ -335,12 +335,12 @@ func (v moment_) asTime() tim.Time {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	year_   = "(?:0|(?:" + ordinal_ + "))"
-	month_  = "(?:(0[1-9])|(1[0-2]))"
 	day_    = "(?:([0-2][1-9])|(3[0-1]))"
 	hour_   = "(?:([0-1][0-9])|(2[0-3]))"
 	minute_ = "(?:[0-5][0-9])"
+	month_  = "(?:(0[1-9])|(1[0-2]))"
 	second_ = "(?:([0-5][0-9])|(6[0-1]))"
+	year_   = "(?:0|(?:" + ordinal_ + "))"
 )
 
 var momentMatcher_ = reg.MustCompile(

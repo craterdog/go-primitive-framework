@@ -141,14 +141,9 @@ func (v boolean_) AsString() string {
 
 // Private Methods
 
-// NOTE:
-// These private constants are used to define the private regular expression
-// matcher that is used to match legal string patterns for this intrinsic type.
-// Unfortunately there is no way to make them private to this class since they
-// must be TRUE Go constants to be used in this way.  We append an underscore to
-// each name to lessen the chance of a name collision with other private Go
-// class constants in this package.
-var booleanMatcher_ = reg.MustCompile("^(?:false|true)")
+var booleanMatcher_ = reg.MustCompile(
+	"^(?:false|true)",
+)
 
 // Instance Structure
 

@@ -91,16 +91,18 @@ func (v citation_) GetVersion() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	name_       = "(?:(/(?:" + identifier_ + "))+)"
+	digit_      = "\\p{Nd}"
 	identifier_ = "(?:(?:" + letter_ + ")((?:" + letter_ + ")|" + digit_ + ")*)"
-	version_    = "(?:v(?:" + ordinal_ + ")(\\.(?:" + ordinal_ + "))*)"
 	letter_     = "(?:" + lower_ + "|" + upper_ + ")"
 	lower_      = "\\p{Ll}"
+	name_       = "(?:(/(?:" + identifier_ + "))+)"
 	upper_      = "\\p{Lu}"
-	digit_      = "\\p{Nd}"
+	version_    = "(?:v(?:" + ordinal_ + ")(\\.(?:" + ordinal_ + "))*)"
 )
 
-var citationMatcher_ = reg.MustCompile("^(?:(?:" + name_ + ")@(?:" + version_ + "))")
+var citationMatcher_ = reg.MustCompile(
+	"^(?:(?:" + name_ + ")@(?:" + version_ + "))",
+)
 
 // Instance Structure
 

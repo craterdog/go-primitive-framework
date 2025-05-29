@@ -404,14 +404,14 @@ func (c *durationClass_) magnitude(value int64) int64 {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	weeks_    = "(?:(?:" + timespan_ + ")W)"
-	years_    = "(?:(?:" + timespan_ + ")Y)"
-	months_   = "(?:(?:" + timespan_ + ")M)"
 	days_     = "(?:(?:" + timespan_ + ")D)"
 	hours_    = "(?:(?:" + timespan_ + ")H)"
 	minutes_  = "(?:(?:" + timespan_ + ")M)"
+	months_   = "(?:(?:" + timespan_ + ")M)"
 	seconds_  = "(?:(?:" + timespan_ + ")S)"
 	timespan_ = "(?:0|((?:" + ordinal_ + ")(?:" + fraction_ + ")?))"
+	weeks_    = "(?:(?:" + timespan_ + ")W)"
+	years_    = "(?:(?:" + timespan_ + ")Y)"
 )
 
 var durationMatcher_ = reg.MustCompile(
