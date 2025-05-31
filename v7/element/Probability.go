@@ -25,10 +25,9 @@ func ProbabilityClass() ProbabilityClassLike {
 // Constructor Methods
 
 func (c *probabilityClass_) Probability(
-	intrinsic float64,
+	float float64,
 ) ProbabilityLike {
-	var instance = probability_(intrinsic)
-	return instance
+	return probability_(float)
 }
 
 func (c *probabilityClass_) ProbabilityFromBoolean(
@@ -103,6 +102,10 @@ func (v probability_) IsUndefined() bool {
 	var result_ bool
 	// TBD - Add the method implementation.
 	return result_
+}
+
+func (v probability_) HasMagnitude() bool {
+	return !v.IsZero()
 }
 
 // Discrete Methods

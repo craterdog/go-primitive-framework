@@ -241,7 +241,7 @@ type TagClassLike interface {
 		string_ string,
 	) TagLike
 	TagWithSize(
-		size int,
+		size age.Size,
 	) TagLike
 	TagFromArray(
 		array []byte,

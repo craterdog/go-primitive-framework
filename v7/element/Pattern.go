@@ -12,7 +12,10 @@
 
 package element
 
-import ()
+import (
+	fmt "fmt"
+	reg "regexp"
+)
 
 // CLASS INTERFACE
 
@@ -25,10 +28,16 @@ func PatternClass() PatternClassLike {
 // Constructor Methods
 
 func (c *patternClass_) Pattern(
-	intrinsic string,
+	string_ string,
 ) PatternLike {
-	var instance = pattern_(intrinsic)
-	return instance
+	if !patternMatcher_.MatchString(string_) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the pattern constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	return pattern_(string_)
 }
 
 // Constant Methods
@@ -60,9 +69,16 @@ func (v pattern_) GetIntrinsic() string {
 // Lexical Methods
 
 func (v pattern_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var string_ string
+	switch v {
+	case `^none$`:
+		string_ = `none`
+	case `.*`:
+		string_ = `any`
+	default:
+		string_ = `"` + string(v) + `"?`
+	}
+	return string_
 }
 
 // Matchable Methods
@@ -70,22 +86,36 @@ func (v pattern_) AsString() string {
 func (v pattern_) MatchesText(
 	text string,
 ) bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	var matcher = reg.MustCompile(string(v))
+	return matcher.MatchString(text)
 }
 
 func (v pattern_) GetMatches(
 	text string,
 ) []string {
-	var result_ []string
-	// TBD - Add the method implementation.
-	return result_
+	var matcher = reg.MustCompile(string(v))
+	return matcher.FindStringSubmatch(text)
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
+
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+const (
+	regex_     = "(?:\"(?:" + character_ + ")+\"\\?)"
+	character_ = "(?:(?:" + escape_ + ")|\\\\\"|[^\"" + control_ + "])"
+)
+
+var patternMatcher_ = reg.MustCompile(
+	"^(?:none|(?:" + regex_ + ")|any)",
+)
 
 // Instance Structure
 
@@ -107,6 +137,6 @@ func patternClass() *patternClass_ {
 
 var patternClassReference_ = &patternClass_{
 	// Initialize the class constants.
-	// none_: constantValue,
-	// any_: constantValue,
+	none_: pattern_(`^none$`),
+	any_:  pattern_(`.*`),
 }

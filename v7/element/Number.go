@@ -99,6 +99,7 @@ func (c *numberClass_) NumberFromPolar(
 	magnitude float64,
 	phase float64,
 ) NumberLike {
+	// Go complex types only use rectangular form so convert to rectangular.
 	var complex_ = cmp.Rect(magnitude, phase)
 	return c.normalize(complex_)
 }
@@ -177,21 +178,40 @@ func (c *numberClass_) Undefined() NumberLike {
 func (c *numberClass_) Inverse(
 	number NumberLike,
 ) NumberLike {
-	return c.normalize(-number.GetIntrinsic())
+	if number.HasMagnitude() {
+		number = c.normalize(-number.GetIntrinsic())
+	}
+	return number
 }
 
 func (c *numberClass_) Sum(
 	first NumberLike,
 	second NumberLike,
 ) NumberLike {
-	return c.normalize(first.GetIntrinsic() + second.GetIntrinsic())
+	switch {
+	case first.IsUndefined() || second.IsUndefined():
+		return c.undefined_
+	case first.IsInfinite() || second.IsInfinite():
+		return c.infinity_
+	default:
+		return c.normalize(first.GetIntrinsic() + second.GetIntrinsic())
+	}
 }
 
 func (c *numberClass_) Difference(
 	first NumberLike,
 	second NumberLike,
 ) NumberLike {
-	return c.normalize(first.GetIntrinsic() - second.GetIntrinsic())
+	switch {
+	case first.IsUndefined() || second.IsUndefined():
+		return c.undefined_
+	case first.IsInfinite() && second.IsInfinite():
+		return c.undefined_
+	case first.IsInfinite() || second.IsInfinite():
+		return c.infinity_
+	default:
+		return c.normalize(first.GetIntrinsic() - second.GetIntrinsic())
+	}
 }
 
 func (c *numberClass_) Scaled(
@@ -382,6 +402,10 @@ func (v number_) IsUndefined() bool {
 	return mat.IsNaN(real(v)) || mat.IsNaN(imag(v))
 }
 
+func (v number_) HasMagnitude() bool {
+	return !v.IsZero() && !v.IsInfinite() && !v.IsUndefined()
+}
+
 // Lexical Methods
 
 func (v number_) AsString() string {
@@ -402,11 +426,11 @@ func (v number_) AsString() string {
 		case realPart == 0:
 			string_ = numberClass().stringFromImaginary(imagPart)
 		default:
-			string_ += "("
 			string_ += numberClass().stringFromFloat(realPart)
-			string_ += ", "
+			if imagPart >= 0 {
+				string_ += "+"
+			}
 			string_ += numberClass().stringFromImaginary(imagPart)
-			string_ += ")"
 		}
 	}
 	return string_

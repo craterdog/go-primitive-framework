@@ -25,10 +25,9 @@ func PercentageClass() PercentageClassLike {
 // Constructor Methods
 
 func (c *percentageClass_) Percentage(
-	intrinsic float64,
+	float float64,
 ) PercentageLike {
-	var instance = percentage_(intrinsic)
-	return instance
+	return percentage_(float)
 }
 
 func (c *percentageClass_) PercentageFromInteger(
@@ -89,6 +88,10 @@ func (v percentage_) IsUndefined() bool {
 	var result_ bool
 	// TBD - Add the method implementation.
 	return result_
+}
+
+func (v percentage_) HasMagnitude() bool {
+	return !(v.IsZero() || v.IsInfinite() || v.IsUndefined())
 }
 
 // Discrete Methods

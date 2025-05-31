@@ -261,17 +261,21 @@ func (v angle_) GetIntrinsic() float64 {
 
 // Angular Methods
 
-func (v angle_) AsNormalized() AngleLike {
-	var result_ AngleLike
-	// TBD - Add the method implementation.
-	return result_
-}
-
 func (v angle_) InUnits(
 	units Units,
 ) float64 {
 	var result_ float64
-	// TBD - Add the method implementation.
+	var radians = v.GetIntrinsic()
+	var pi = angleClass().pi_.GetIntrinsic()
+	var tau = angleClass().tau_.GetIntrinsic()
+	switch units {
+	case Degrees:
+		result_ = 360.0 * radians / tau
+	case Radians:
+		result_ = radians
+	case Gradians:
+		result_ = 200.0 / pi
+	}
 	return result_
 }
 
@@ -279,7 +283,9 @@ func (v angle_) GetParts() (
 	x float64,
 	y float64,
 ) {
-	// TBD - Add the method implementation.
+	var complex_ = v.GetIntrinsic()
+	x = mat.Cos(complex_)
+	y = mat.Sin(complex_)
 	return
 }
 
@@ -299,6 +305,10 @@ func (v angle_) IsInfinite() bool {
 
 func (v angle_) IsUndefined() bool {
 	return false
+}
+
+func (v angle_) HasMagnitude() bool {
+	return !v.IsZero()
 }
 
 // Lexical Methods

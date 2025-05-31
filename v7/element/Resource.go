@@ -12,7 +12,10 @@
 
 package element
 
-import ()
+import (
+	fmt "fmt"
+	reg "regexp"
+)
 
 // CLASS INTERFACE
 
@@ -25,10 +28,16 @@ func ResourceClass() ResourceClassLike {
 // Constructor Methods
 
 func (c *resourceClass_) Resource(
-	intrinsic string,
+	string_ string,
 ) ResourceLike {
-	var instance = resource_(intrinsic)
-	return instance
+	if !resourceMatcher_.MatchString(string_) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the resource constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	return resource_(string_)
 }
 
 // Constant Methods
@@ -92,6 +101,28 @@ func (v resource_) GetFragment() string {
 // PROTECTED INTERFACE
 
 // Private Methods
+
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+const (
+	scheme_       = "(?:(?:" + alpha_ + ")((?:" + alphanumeric_ + ")|\\+|-|\\.)*)"
+	authority_    = "(?:[^/" + control_ + "]+)"
+	path_         = "(?:[^\\?#>" + control_ + "]*)"
+	query_        = "(?:[^#>" + control_ + "]*)"
+	fragment_     = "(?:[^>" + control_ + "]*)"
+	alpha_        = "(?:[A-Za-z])"
+	alphanumeric_ = "(?:(?:" + alpha_ + ")|(?:" + base10_ + "))"
+)
+
+var resourceMatcher_ = reg.MustCompile(
+	"^(?:<(?:" + scheme_ + "):(//(?:" + authority_ + "))?/(?:" + path_ +
+		")(\\?(?:" + query_ + "))?(#(?:" + fragment_ + "))?>)",
+)
 
 // Instance Structure
 

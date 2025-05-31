@@ -31,8 +31,7 @@ func BooleanClass() BooleanClassLike {
 func (c *booleanClass_) Boolean(
 	boolean bool,
 ) BooleanLike {
-	var instance = boolean_(boolean)
-	return instance
+	return boolean_(boolean)
 }
 
 func (c *booleanClass_) BooleanFromString(

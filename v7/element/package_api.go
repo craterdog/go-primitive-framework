@@ -57,7 +57,7 @@ angle-like concrete class.
 type AngleClassLike interface {
 	// Constructor Methods
 	Angle(
-		intrinsic float64,
+		radians float64,
 	) AngleLike
 	AngleFromString(
 		string_ string,
@@ -124,7 +124,7 @@ boolean-like concrete class.
 type BooleanClassLike interface {
 	// Constructor Methods
 	Boolean(
-		intrinsic bool,
+		boolean bool,
 	) BooleanLike
 	BooleanFromString(
 		string_ string,
@@ -164,7 +164,7 @@ citation-like concrete class.
 type CitationClassLike interface {
 	// Constructor Methods
 	Citation(
-		intrinsic string,
+		string_ string,
 	) CitationLike
 }
 
@@ -205,7 +205,7 @@ glyph-like concrete class.
 type GlyphClassLike interface {
 	// Constructor Methods
 	Glyph(
-		intrinsic rune,
+		rune_ rune,
 	) GlyphLike
 	GlyphFromInteger(
 		integer int64,
@@ -270,7 +270,7 @@ number-like concrete class.
 type NumberClassLike interface {
 	// Constructor Methods
 	Number(
-		intrinsic complex128,
+		complex_ complex128,
 	) NumberLike
 	NumberFromPolar(
 		magnitude float64,
@@ -349,7 +349,7 @@ pattern-like concrete class.
 type PatternClassLike interface {
 	// Constructor Methods
 	Pattern(
-		intrinsic string,
+		string_ string,
 	) PatternLike
 
 	// Constant Methods
@@ -365,7 +365,7 @@ percentage-like concrete class.
 type PercentageClassLike interface {
 	// Constructor Methods
 	Percentage(
-		intrinsic float64,
+		float float64,
 	) PercentageLike
 	PercentageFromInteger(
 		integer int64,
@@ -383,7 +383,7 @@ probability-like concrete class.
 type ProbabilityClassLike interface {
 	// Constructor Methods
 	Probability(
-		intrinsic float64,
+		float float64,
 	) ProbabilityLike
 	ProbabilityFromBoolean(
 		boolean bool,
@@ -408,7 +408,7 @@ resource-like concrete class.
 type ResourceClassLike interface {
 	// Constructor Methods
 	Resource(
-		intrinsic string,
+		string_ string,
 	) ResourceLike
 }
 
@@ -598,7 +598,6 @@ Angular is an aspect interface that declares a set of method signatures that
 must be supported by each instance of an angular concrete class.
 */
 type Angular interface {
-	AsNormalized() AngleLike
 	InUnits(
 		units Units,
 	) float64
@@ -628,6 +627,7 @@ type Continuous interface {
 	IsZero() bool
 	IsInfinite() bool
 	IsUndefined() bool
+	HasMagnitude() bool
 }
 
 /*
