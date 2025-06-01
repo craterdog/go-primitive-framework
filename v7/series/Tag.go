@@ -13,7 +13,9 @@
 package series
 
 import (
+	ran "crypto/rand"
 	uti "github.com/craterdog/go-missing-utilities/v7"
+	big "math/big"
 	age "github.com/craterdog/go-primitive-framework/v7/agent"
 )
 
@@ -141,6 +143,15 @@ func (v *tag_) GetIterator() age.IteratorLike[byte] {
 // PROTECTED INTERFACE
 
 // Private Methods
+
+func (c *tagClass_) randomBytes(size int) []byte {
+	var bytes = make([]byte, size)
+	var _, err = ran.Read(bytes)
+	if err != nil {
+		panic(fmt.Sprintf("The random number generator gave the following error: %v", err))
+	}
+	return bytes
+}
 
 // Instance Structure
 

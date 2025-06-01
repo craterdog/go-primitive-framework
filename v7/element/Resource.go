@@ -14,6 +14,7 @@ package element
 
 import (
 	fmt "fmt"
+	uri "net/url"
 	reg "regexp"
 )
 
@@ -40,6 +41,12 @@ func (c *resourceClass_) Resource(
 	return resource_(string_)
 }
 
+func (c *resourceClass_) ResourceFromUri(
+	url *uri.URL,
+) ResourceLike {
+	return resource_("<" + url.String() + ">")
+}
+
 // Constant Methods
 
 // Function Methods
@@ -56,46 +63,60 @@ func (v resource_) GetIntrinsic() string {
 	return string(v)
 }
 
+func (v resource_) AsUri() *uri.URL {
+	var string_ = string(v)
+	string_ = string_[1 : len(string_)-1] // Strip off the angle brackets.
+	var url, err = uri.Parse(string_)
+	if err != nil {
+		var message = fmt.Sprintf(
+			"Unable to parse a URI string: %s",
+			string_,
+		)
+		panic(message)
+	}
+	return url
+}
+
 // Attribute Methods
 
 // Lexical Methods
 
 func (v resource_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	return string(v)
 }
 
 // Segmented Methods
 
 func (v resource_) GetScheme() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var url = v.AsUri()
+	return url.Scheme
 }
 
 func (v resource_) GetAuthority() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var authority string
+	var url = v.AsUri()
+	var user = url.User.String()
+	var host = url.Host
+	if len(user) > 0 {
+		authority = user + "@"
+	}
+	authority += host
+	return authority
 }
 
 func (v resource_) GetPath() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var url = v.AsUri()
+	return url.Path
 }
 
 func (v resource_) GetQuery() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var url = v.AsUri()
+	return url.RawQuery
 }
 
 func (v resource_) GetFragment() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	var url = v.AsUri()
+	return url.Fragment
 }
 
 // PROTECTED INTERFACE
