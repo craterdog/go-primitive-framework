@@ -12,7 +12,13 @@
 
 package element
 
-import ()
+import (
+	fmt "fmt"
+	uti "github.com/craterdog/go-missing-utilities/v7"
+	mat "math"
+	reg "regexp"
+	stc "strconv"
+)
 
 // CLASS INTERFACE
 
@@ -31,19 +37,24 @@ func (c *percentageClass_) Percentage(
 }
 
 func (c *percentageClass_) PercentageFromInteger(
-	integer int64,
+	integer int,
 ) PercentageLike {
-	var instance PercentageLike
-	// TBD - Add the constructor implementation.
-	return instance
+	return percentage_(float64(integer))
 }
 
 func (c *percentageClass_) PercentageFromString(
 	string_ string,
 ) PercentageLike {
-	var instance PercentageLike
-	// TBD - Add the constructor implementation.
-	return instance
+	var matches = percentageMatcher_.FindStringSubmatch(string_)
+	if uti.IsUndefined(matches) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the percentage constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	var float, _ = stc.ParseFloat(matches[1], 64) // Strip off the '%' suffix.
+	return percentage_(float)
 }
 
 // Constant Methods
@@ -67,27 +78,19 @@ func (v percentage_) GetIntrinsic() float64 {
 // Continuous Methods
 
 func (v percentage_) AsFloat() float64 {
-	var result_ float64
-	// TBD - Add the method implementation.
-	return result_
+	return float64(v / 100.0)
 }
 
 func (v percentage_) IsZero() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return v == 0
 }
 
 func (v percentage_) IsInfinite() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return mat.IsInf(float64(v), 0)
 }
 
 func (v percentage_) IsUndefined() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return mat.IsNaN(float64(v))
 }
 
 func (v percentage_) HasMagnitude() bool {
@@ -97,36 +100,39 @@ func (v percentage_) HasMagnitude() bool {
 // Discrete Methods
 
 func (v percentage_) AsBoolean() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return v != 0
 }
 
-func (v percentage_) AsInteger() int64 {
-	var result_ int64
-	// TBD - Add the method implementation.
-	return result_
+func (v percentage_) AsInteger() int {
+	return int(float64(v))
 }
 
 // Lexical Methods
 
 func (v percentage_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	return numberClass().stringFromFloat(float64(v)) + "%"
 }
 
 // Polarized Methods
 
 func (v percentage_) IsNegative() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
+	return v < 0
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
+
+// NOTE:
+// These private constants are used to define the private regular expression
+// matcher that is used to match legal string patterns for this intrinsic type.
+// Unfortunately there is no way to make them private to this class since they
+// must be TRUE Go constants to be used in this way.  We append an underscore to
+// each name to lessen the chance of a name collision with other private Go
+// class constants in this package.
+var percentageMatcher_ = reg.MustCompile(
+	"^(?:(?:" + real_ + ")%)",
+)
 
 // Instance Structure
 

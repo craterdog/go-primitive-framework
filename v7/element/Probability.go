@@ -116,8 +116,8 @@ func (v probability_) AsBoolean() bool {
 	return result_
 }
 
-func (v probability_) AsInteger() int64 {
-	var result_ int64
+func (v probability_) AsInteger() int {
+	var result_ int
 	// TBD - Add the method implementation.
 	return result_
 }

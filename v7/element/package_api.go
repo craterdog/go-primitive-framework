@@ -208,7 +208,7 @@ type GlyphClassLike interface {
 		rune_ rune,
 	) GlyphLike
 	GlyphFromInteger(
-		integer int64,
+		integer int,
 	) GlyphLike
 	GlyphFromString(
 		string_ string,
@@ -368,7 +368,7 @@ type PercentageClassLike interface {
 		float float64,
 	) PercentageLike
 	PercentageFromInteger(
-		integer int64,
+		integer int,
 	) PercentageLike
 	PercentageFromString(
 		string_ string,
@@ -636,7 +636,7 @@ that must be supported by each instance of a discrete elemental class.
 */
 type Discrete interface {
 	AsBoolean() bool
-	AsInteger() int64
+	AsInteger() int
 }
 
 /*

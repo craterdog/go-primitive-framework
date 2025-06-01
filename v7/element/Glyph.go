@@ -38,7 +38,7 @@ func (c *glyphClass_) Glyph(
 }
 
 func (c *glyphClass_) GlyphFromInteger(
-	integer int64,
+	integer int,
 ) GlyphLike {
 	return glyph_(integer)
 }
@@ -101,8 +101,8 @@ func (v glyph_) AsBoolean() bool {
 	return v > -1
 }
 
-func (v glyph_) AsInteger() int64 {
-	return int64(v)
+func (v glyph_) AsInteger() int {
+	return int(v)
 }
 
 // Lexical Methods

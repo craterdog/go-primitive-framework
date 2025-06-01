@@ -524,6 +524,8 @@ func (c *numberClass_) floatFromString(string_ string) float64 {
 		float = mat.Inf(1)
 	case "-infinity", "-∞":
 		float = mat.Inf(-1)
+	case "undefined":
+		float = mat.NaN()
 	default:
 		float, _ = stc.ParseFloat(string_, 64)
 	}
@@ -593,27 +595,29 @@ func (c *numberClass_) normalize(complex_ complex128) NumberLike {
 
 func (c *numberClass_) stringFromFloat(float float64) string {
 	var string_ string
-	switch float {
-	case mat.E:
+	switch {
+	case float == mat.E:
 		string_ = "e"
-	case -mat.E:
+	case float == -mat.E:
 		string_ = "-e"
-	case mat.Pi:
+	case float == mat.Pi:
 		string_ = "π"
-	case -mat.Pi:
+	case float == -mat.Pi:
 		string_ = "-π"
-	case mat.Phi:
+	case float == mat.Phi:
 		string_ = "φ"
-	case -mat.Phi:
+	case float == -mat.Phi:
 		string_ = "-φ"
-	case mat.Pi * 2.0:
+	case float == mat.Pi*2.0:
 		string_ = "τ"
-	case -mat.Pi * 2.0:
+	case float == -mat.Pi*2.0:
 		string_ = "-τ"
-	case mat.Inf(1):
+	case float == mat.Inf(1):
 		string_ = "∞"
-	case mat.Inf(-1):
+	case float == mat.Inf(-1):
 		string_ = "-∞"
+	case mat.IsNaN(float):
+		string_ = "undefined"
 	default:
 		string_ = stc.FormatFloat(float, 'G', -1, 64)
 	}
@@ -651,7 +655,7 @@ const (
 	imaginary_      = "(?:(?:" + sign_ + ")?(?:" + amplitude_ + ")i)"
 	infinity_       = "(?:(?:" + sign_ + ")?(infinity|∞))"
 	ordinal_        = "(?:[1-9](?:" + base10_ + ")*)"
-	polar_          = "(?:(?:" + amplitude_ + ")e\\^(?:" + phase_ + ")?i)"
+	polar_          = "(?:(?:" + amplitude_ + ")e\\^(~(0|(?:" + amplitude_ + ")))?i)"
 	real_           = "(?:0|(?:" + float_ + ")|(?:" + infinity_ + ")|(?:" + undefined_ + "))"
 	rectangular_    = "(?:(?:" + float_ + ")(?:" + sign_ + ")(?:" + float_ + ")?i)"
 	sign_           = "(?:\\+|-)"

@@ -370,7 +370,6 @@ func (c *angleClass_) stringFromAngle(angle angle_) string {
 	return string_
 }
 
-// This constructor creates a new number from the specified polar values.
 // NOTE:
 // These private constants are used to define the private regular expression
 // matcher that is used to match legal string patterns for this intrinsic type.
@@ -378,12 +377,8 @@ func (c *angleClass_) stringFromAngle(angle angle_) string {
 // must be TRUE Go constants to be used in this way.  We append an underscore to
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
-const (
-	phase_ = "(?:~(0|(?:" + amplitude_ + ")))"
-)
-
 var angleMatcher_ = reg.MustCompile(
-	"^" + phase_,
+	"^(?:~(0|(?:" + amplitude_ + ")))",
 )
 
 // Instance Structure

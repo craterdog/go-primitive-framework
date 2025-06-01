@@ -121,8 +121,8 @@ func (v boolean_) AsBoolean() bool {
 	return result_
 }
 
-func (v boolean_) AsInteger() int64 {
-	var result_ int64
+func (v boolean_) AsInteger() int {
+	var result_ int
 	if v {
 		result_ = 1
 	}

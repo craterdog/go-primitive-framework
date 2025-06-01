@@ -123,8 +123,8 @@ func (v duration_) AsBoolean() bool {
 	return v != 0
 }
 
-func (v duration_) AsInteger() int64 {
-	return int64(v)
+func (v duration_) AsInteger() int {
+	return int(v)
 }
 
 // Lexical Methods

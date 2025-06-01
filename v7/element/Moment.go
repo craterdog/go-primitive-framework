@@ -115,8 +115,8 @@ func (v moment_) AsBoolean() bool {
 	return true
 }
 
-func (v moment_) AsInteger() int64 {
-	return int64(v)
+func (v moment_) AsInteger() int {
+	return int(v)
 }
 
 // Lexical Methods
