@@ -30,7 +30,9 @@ on interfaces, not on each other.
 */
 package element
 
-import ()
+import (
+	uri "net/url"
+)
 
 // TYPE DECLARATIONS
 
@@ -410,6 +412,9 @@ type ResourceClassLike interface {
 	Resource(
 		string_ string,
 	) ResourceLike
+	ResourceFromUri(
+		url *uri.URL,
+	) ResourceLike
 }
 
 // INSTANCE DECLARATIONS
@@ -585,6 +590,7 @@ type ResourceLike interface {
 	// Principal Methods
 	GetClass() ResourceClassLike
 	GetIntrinsic() string
+	AsUri() *uri.URL
 
 	// Aspect Interfaces
 	Lexical

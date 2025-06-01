@@ -33,7 +33,7 @@ func AngleClass() AngleClassLike {
 func (c *angleClass_) Angle(
 	radians float64,
 ) AngleLike {
-	return angle_(radians)
+	return c.angleFromFloat(radians)
 }
 
 func (c *angleClass_) AngleFromString(
@@ -57,7 +57,7 @@ func (c *angleClass_) AngleFromString(
 	default:
 		float, _ = stc.ParseFloat(match, 64)
 	}
-	return angle_(float)
+	return c.angleFromFloat(float)
 }
 
 // Constant Methods
