@@ -33,13 +33,14 @@ func PercentageClass() PercentageClassLike {
 func (c *percentageClass_) Percentage(
 	float float64,
 ) PercentageLike {
-	return percentage_(float)
+	return percentage_(float / 100.0)
 }
 
 func (c *percentageClass_) PercentageFromInteger(
 	integer int,
 ) PercentageLike {
-	return percentage_(float64(integer))
+	var float = float64(integer)
+	return percentage_(float / 100.0)
 }
 
 func (c *percentageClass_) PercentageFromString(
@@ -53,8 +54,11 @@ func (c *percentageClass_) PercentageFromString(
 		)
 		panic(message)
 	}
-	var float, _ = stc.ParseFloat(matches[1], 64) // Strip off the '%' suffix.
-	return percentage_(float)
+	var float, _ = stc.ParseFloat(matches[2], 64) // Strip off the '%' suffix.
+	if matches[1] == "-" {
+		float = -float
+	}
+	return percentage_(float / 100.0)
 }
 
 // Constant Methods
@@ -78,7 +82,7 @@ func (v percentage_) GetIntrinsic() float64 {
 // Continuous Methods
 
 func (v percentage_) AsFloat() float64 {
-	return float64(v / 100.0)
+	return float64(v * 100.0)
 }
 
 func (v percentage_) IsZero() bool {
@@ -104,13 +108,13 @@ func (v percentage_) AsBoolean() bool {
 }
 
 func (v percentage_) AsInteger() int {
-	return int(float64(v))
+	return int(float64(v) * 100.0)
 }
 
 // Lexical Methods
 
 func (v percentage_) AsString() string {
-	return numberClass().stringFromFloat(float64(v)) + "%"
+	return numberClass().stringFromFloat(float64(v)*100.0) + "%"
 }
 
 // Polarized Methods

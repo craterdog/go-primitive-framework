@@ -400,6 +400,25 @@ type ProbabilityClassLike interface {
 
 	// Function Methods
 	Random() ProbabilityLike
+	Not(
+		probability ProbabilityLike,
+	) ProbabilityLike
+	And(
+		first ProbabilityLike,
+		second ProbabilityLike,
+	) ProbabilityLike
+	San(
+		first ProbabilityLike,
+		second ProbabilityLike,
+	) ProbabilityLike
+	Ior(
+		first ProbabilityLike,
+		second ProbabilityLike,
+	) ProbabilityLike
+	Xor(
+		first ProbabilityLike,
+		second ProbabilityLike,
+	) ProbabilityLike
 }
 
 /*

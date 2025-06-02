@@ -120,32 +120,32 @@ func TestBooleansLibrary(t *tes.T) {
 	var F = BooleanClass.Boolean(false)
 
 	var andNot = BooleanClass.And(BooleanClass.Not(T), BooleanClass.Not(T))
-	var notOr = BooleanClass.Not(BooleanClass.Ior(T, T))
-	ass.Equal(t, andNot, notOr)
+	var notIor = BooleanClass.Not(BooleanClass.Ior(T, T))
+	ass.Equal(t, andNot, notIor)
 
 	andNot = BooleanClass.And(BooleanClass.Not(T), BooleanClass.Not(F))
-	notOr = BooleanClass.Not(BooleanClass.Ior(T, F))
-	ass.Equal(t, andNot, notOr)
+	notIor = BooleanClass.Not(BooleanClass.Ior(T, F))
+	ass.Equal(t, andNot, notIor)
 
 	andNot = BooleanClass.And(BooleanClass.Not(F), BooleanClass.Not(T))
-	notOr = BooleanClass.Not(BooleanClass.Ior(F, T))
-	ass.Equal(t, andNot, notOr)
+	notIor = BooleanClass.Not(BooleanClass.Ior(F, T))
+	ass.Equal(t, andNot, notIor)
 
 	andNot = BooleanClass.And(BooleanClass.Not(F), BooleanClass.Not(F))
-	notOr = BooleanClass.Not(BooleanClass.Ior(F, F))
-	ass.Equal(t, andNot, notOr)
+	notIor = BooleanClass.Not(BooleanClass.Ior(F, F))
+	ass.Equal(t, andNot, notIor)
 
-	var sans = BooleanClass.And(T, BooleanClass.Not(T))
-	ass.Equal(t, sans, BooleanClass.San(T, T))
+	var san = BooleanClass.And(T, BooleanClass.Not(T))
+	ass.Equal(t, san, BooleanClass.San(T, T))
 
-	sans = BooleanClass.And(T, BooleanClass.Not(F))
-	ass.Equal(t, sans, BooleanClass.San(T, F))
+	san = BooleanClass.And(T, BooleanClass.Not(F))
+	ass.Equal(t, san, BooleanClass.San(T, F))
 
-	sans = BooleanClass.And(F, BooleanClass.Not(T))
-	ass.Equal(t, sans, BooleanClass.San(F, T))
+	san = BooleanClass.And(F, BooleanClass.Not(T))
+	ass.Equal(t, san, BooleanClass.San(F, T))
 
-	sans = BooleanClass.And(F, BooleanClass.Not(F))
-	ass.Equal(t, sans, BooleanClass.San(F, F))
+	san = BooleanClass.And(F, BooleanClass.Not(F))
+	ass.Equal(t, san, BooleanClass.San(F, F))
 
 	var xor = BooleanClass.Ior(BooleanClass.San(T, T), BooleanClass.San(T, T))
 	ass.Equal(t, xor, BooleanClass.Xor(T, T))
@@ -664,4 +664,169 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, zero, NumberClass.Logarithm(infinity, one))
 	ass.True(t, NumberClass.Logarithm(infinity, infinity).IsUndefined())
 	ass.True(t, NumberClass.Logarithm(infinity, undefined).IsUndefined())
+}
+
+var PatternClass = ele.PatternClass()
+
+func TestNonePattern(t *tes.T) {
+	var v = PatternClass.Pattern(`none`)
+	ass.Equal(t, `none`, v.AsString())
+
+	var text = ""
+	ass.False(t, v.MatchesText(text))
+	ass.Equal(t, []string(nil), v.GetMatches(text))
+
+	text = "anything at all..."
+	ass.False(t, v.MatchesText(text))
+	ass.Equal(t, []string(nil), v.GetMatches(text))
+
+	text = "none"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+}
+
+func TestAnyPattern(t *tes.T) {
+	var v = PatternClass.Pattern(`any`)
+	ass.Equal(t, `any`, v.AsString())
+
+	var text = ""
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+
+	text = "anything at all..."
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+
+	text = "none"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+}
+
+func TestSomePattern(t *tes.T) {
+	var v = PatternClass.Pattern(`"c(.+t)"?`)
+	ass.Equal(t, `"c(.+t)"?`, v.AsString())
+
+	var text = "ct"
+	ass.False(t, v.MatchesText(text))
+	ass.Equal(t, []string(nil), v.GetMatches(text))
+
+	text = "cat"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
+
+	text = "caaat"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
+
+	text = "cot"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
+}
+
+var PercentageClass = ele.PercentageClass()
+
+func TestZeroPercentages(t *tes.T) {
+	var v = PercentageClass.Percentage(0.0)
+	ass.Equal(t, 0.0, v.AsFloat())
+}
+
+func TestPositivePercentages(t *tes.T) {
+	var v = PercentageClass.Percentage(25)
+	ass.Equal(t, 0.25, v.GetIntrinsic())
+	ass.Equal(t, 25, v.AsInteger())
+	ass.Equal(t, 25.0, v.AsFloat())
+}
+
+func TestNegativePercentages(t *tes.T) {
+	var v = PercentageClass.Percentage(-75)
+	ass.Equal(t, -0.75, v.GetIntrinsic())
+	ass.Equal(t, -75, v.AsInteger())
+	ass.Equal(t, -75.0, v.AsFloat())
+}
+
+func TestStringPercentages(t *tes.T) {
+	var v = PercentageClass.PercentageFromString("-100.0%")
+	ass.Equal(t, -1.0, v.GetIntrinsic())
+	ass.Equal(t, -100, v.AsInteger())
+	ass.Equal(t, -100.0, v.AsFloat())
+}
+
+var ProbabilityClass = ele.ProbabilityClass()
+
+func TestBooleanProbabilities(t *tes.T) {
+	var v1 = ProbabilityClass.ProbabilityFromBoolean(false)
+	ass.Equal(t, 0.0, v1.AsFloat())
+
+	var v2 = ProbabilityClass.ProbabilityFromBoolean(true)
+	ass.Equal(t, 1.0, v2.AsFloat())
+}
+
+func TestZeroProbabilities(t *tes.T) {
+	var v = ProbabilityClass.Probability(0.0)
+	ass.Equal(t, 0.0, v.AsFloat())
+}
+
+func TestOneProbabilities(t *tes.T) {
+	var v = ProbabilityClass.Probability(1.0)
+	ass.Equal(t, 1.0, v.AsFloat())
+}
+
+func TestRandomProbabilities(t *tes.T) {
+	ProbabilityClass.Random()
+}
+
+func TestOtherProbabilities(t *tes.T) {
+	var v1 = ProbabilityClass.Probability(0.25)
+	ass.Equal(t, 0.25, v1.AsFloat())
+
+	var v2 = ProbabilityClass.Probability(0.5)
+	ass.Equal(t, 0.5, v2.AsFloat())
+
+	var v3 = ProbabilityClass.Probability(0.75)
+	ass.Equal(t, 0.75, v3.AsFloat())
+}
+
+func TestProbabilitieLibrary(t *tes.T) {
+	var T = ProbabilityClass.Probability(0.75)
+	var F = ProbabilityClass.Probability(0.25)
+
+	var andNot = ProbabilityClass.And(ProbabilityClass.Not(T), ProbabilityClass.Not(T))
+	var notIor = ProbabilityClass.Not(ProbabilityClass.Ior(T, T))
+	ass.Equal(t, andNot, notIor)
+
+	andNot = ProbabilityClass.And(ProbabilityClass.Not(T), ProbabilityClass.Not(F))
+	notIor = ProbabilityClass.Not(ProbabilityClass.Ior(T, F))
+	ass.Equal(t, andNot, notIor)
+
+	andNot = ProbabilityClass.And(ProbabilityClass.Not(F), ProbabilityClass.Not(T))
+	notIor = ProbabilityClass.Not(ProbabilityClass.Ior(F, T))
+	ass.Equal(t, andNot, notIor)
+
+	andNot = ProbabilityClass.And(ProbabilityClass.Not(F), ProbabilityClass.Not(F))
+	notIor = ProbabilityClass.Not(ProbabilityClass.Ior(F, F))
+	ass.Equal(t, andNot, notIor)
+
+	var san = ProbabilityClass.And(T, ProbabilityClass.Not(T))
+	ass.Equal(t, san, ProbabilityClass.San(T, T))
+
+	san = ProbabilityClass.And(T, ProbabilityClass.Not(F))
+	ass.Equal(t, san, ProbabilityClass.San(T, F))
+
+	san = ProbabilityClass.And(F, ProbabilityClass.Not(T))
+	ass.Equal(t, san, ProbabilityClass.San(F, T))
+
+	san = ProbabilityClass.And(F, ProbabilityClass.Not(F))
+	ass.Equal(t, san, ProbabilityClass.San(F, F))
+
+	var xor = ProbabilityClass.Probability(ProbabilityClass.San(T, T).AsFloat() + ProbabilityClass.San(T, T).AsFloat())
+	ass.Equal(t, xor, ProbabilityClass.Xor(T, T))
+
+	xor = ProbabilityClass.Probability(ProbabilityClass.San(T, F).AsFloat() + ProbabilityClass.San(F, T).AsFloat())
+	ass.Equal(t, xor, ProbabilityClass.Xor(T, F))
+
+	xor = ProbabilityClass.Probability(ProbabilityClass.San(F, T).AsFloat() + ProbabilityClass.San(T, F).AsFloat())
+	ass.Equal(t, xor, ProbabilityClass.Xor(F, T))
+
+	xor = ProbabilityClass.Probability(ProbabilityClass.San(F, F).AsFloat() + ProbabilityClass.San(F, F).AsFloat())
+	ass.Equal(t, xor, ProbabilityClass.Xor(F, F))
 }

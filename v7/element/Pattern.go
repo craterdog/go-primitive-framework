@@ -14,6 +14,7 @@ package element
 
 import (
 	fmt "fmt"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 )
 
@@ -30,14 +31,22 @@ func PatternClass() PatternClassLike {
 func (c *patternClass_) Pattern(
 	string_ string,
 ) PatternLike {
-	if !patternMatcher_.MatchString(string_) {
+	var matches = patternMatcher_.FindStringSubmatch(string_)
+	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the pattern constructor method: %s",
 			string_,
 		)
 		panic(message)
 	}
-	return pattern_(string_)
+	switch matches[0] {
+	case "none":
+		return c.none_
+	case "any":
+		return c.any_
+	default:
+		return pattern_(matches[1]) // Strip off the trailing '?' character.
+	}
 }
 
 // Constant Methods
@@ -109,7 +118,7 @@ func (v pattern_) GetMatches(
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	regex_     = "(?:\"(?:" + character_ + ")+\"\\?)"
+	regex_     = "(?:\"((?:" + character_ + ")+)\"\\?)"
 	character_ = "(?:(?:" + escape_ + ")|\\\\\"|[^\"" + control_ + "])"
 )
 

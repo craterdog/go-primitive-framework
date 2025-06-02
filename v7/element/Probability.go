@@ -87,7 +87,49 @@ func (c *probabilityClass_) Maximum() ProbabilityLike {
 // Function Methods
 
 func (c *probabilityClass_) Random() ProbabilityLike {
-	return probability_(c.randomProbability())
+	var maximum = 1 << 53
+	return probability_(float64(c.randomInteger(maximum)) / float64(maximum))
+}
+
+func (c *probabilityClass_) Not(
+	probability ProbabilityLike,
+) ProbabilityLike {
+	var not = 1.0 - probability.AsFloat()
+	return probability_(not)
+}
+
+func (c *probabilityClass_) And(
+	first ProbabilityLike,
+	second ProbabilityLike,
+) ProbabilityLike {
+	var and = first.AsFloat() * second.AsFloat()
+	return probability_(and)
+}
+
+func (c *probabilityClass_) San(
+	first ProbabilityLike,
+	second ProbabilityLike,
+) ProbabilityLike {
+	var san = first.AsFloat() * (1.0 - second.AsFloat())
+	return probability_(san)
+}
+
+func (c *probabilityClass_) Ior(
+	first ProbabilityLike,
+	second ProbabilityLike,
+) ProbabilityLike {
+	var ior = first.AsFloat() + second.AsFloat() -
+		first.AsFloat()*second.AsFloat()
+	return probability_(ior)
+}
+
+func (c *probabilityClass_) Xor(
+	first ProbabilityLike,
+	second ProbabilityLike,
+) ProbabilityLike {
+	var xor = first.AsFloat() + second.AsFloat() -
+		2.0*first.AsFloat()*second.AsFloat()
+	return probability_(xor)
 }
 
 // INSTANCE INTERFACE
@@ -152,8 +194,6 @@ func (v probability_) AsString() string {
 
 // Private Methods
 
-const maximum_ = 1 << 53
-
 func (c *probabilityClass_) randomBoolean() bool {
 	var random, err = ran.Int(ran.Reader, big.NewInt(int64(2)))
 	if err != nil {
@@ -168,10 +208,6 @@ func (c *probabilityClass_) randomInteger(max int) int {
 		panic(fmt.Sprintf("The random number generator gave the following error: %v", err))
 	}
 	return int(random.Int64())
-}
-
-func (c *probabilityClass_) randomProbability() float64 {
-	return float64(c.randomInteger(maximum_)) / float64(maximum_)
 }
 
 // NOTE:
@@ -205,6 +241,6 @@ func probabilityClass() *probabilityClass_ {
 
 var probabilityClassReference_ = &probabilityClass_{
 	// Initialize the class constants.
-	// minimum_: constantValue,
-	// maximum_: constantValue,
+	maximum_: probability_(1.0),
+	minimum_: probability_(0.0),
 }
