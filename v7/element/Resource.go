@@ -14,6 +14,7 @@ package element
 
 import (
 	fmt "fmt"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 	uri "net/url"
 	reg "regexp"
 )
@@ -31,20 +32,21 @@ func ResourceClass() ResourceClassLike {
 func (c *resourceClass_) Resource(
 	string_ string,
 ) ResourceLike {
-	if !resourceMatcher_.MatchString(string_) {
+	var matches = resourceMatcher_.FindStringSubmatch(string_)
+	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the resource constructor method: %s",
 			string_,
 		)
 		panic(message)
 	}
-	return resource_(string_)
+	return resource_(matches[1]) // Strip off the angle brackets.
 }
 
 func (c *resourceClass_) ResourceFromUri(
 	url *uri.URL,
 ) ResourceLike {
-	return resource_("<" + url.String() + ">")
+	return resource_(url.String())
 }
 
 // Constant Methods
@@ -64,16 +66,7 @@ func (v resource_) GetIntrinsic() string {
 }
 
 func (v resource_) AsUri() *uri.URL {
-	var string_ = string(v)
-	string_ = string_[1 : len(string_)-1] // Strip off the angle brackets.
-	var url, err = uri.Parse(string_)
-	if err != nil {
-		var message = fmt.Sprintf(
-			"Unable to parse a URI string: %s",
-			string_,
-		)
-		panic(message)
-	}
+	var url, _ = uri.Parse(string(v))
 	return url
 }
 
@@ -82,7 +75,7 @@ func (v resource_) AsUri() *uri.URL {
 // Lexical Methods
 
 func (v resource_) AsString() string {
-	return string(v)
+	return "<" + string(v) + ">"
 }
 
 // Segmented Methods
@@ -141,8 +134,8 @@ const (
 )
 
 var resourceMatcher_ = reg.MustCompile(
-	"^(?:<(?:" + scheme_ + "):(//(?:" + authority_ + "))?/(?:" + path_ +
-		")(\\?(?:" + query_ + "))?(#(?:" + fragment_ + "))?>)",
+	"^(?:<((" + scheme_ + "):(//(" + authority_ + "))?(" + path_ +
+		")(\\?(" + query_ + "))?(?:#(" + fragment_ + "))?)>)",
 )
 
 // Instance Structure
