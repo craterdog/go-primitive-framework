@@ -178,7 +178,7 @@ duration-like concrete class.
 type DurationClassLike interface {
 	// Constructor Methods
 	Duration(
-		milliseconds int64,
+		milliseconds int,
 	) DurationLike
 	DurationFromString(
 		string_ string,
@@ -187,13 +187,13 @@ type DurationClassLike interface {
 	// Constant Methods
 	Minimum() DurationLike
 	Maximum() DurationLike
-	MillisecondsPerSecond() int64
-	MillisecondsPerMinute() int64
-	MillisecondsPerHour() int64
-	MillisecondsPerDay() int64
-	MillisecondsPerWeek() int64
-	MillisecondsPerMonth() int64
-	MillisecondsPerYear() int64
+	MillisecondsPerSecond() int
+	MillisecondsPerMinute() int
+	MillisecondsPerHour() int
+	MillisecondsPerDay() int
+	MillisecondsPerWeek() int
+	MillisecondsPerMonth() int
+	MillisecondsPerYear() int
 	DaysPerMonth() float64
 	DaysPerYear() float64
 	WeeksPerMonth() float64
@@ -237,7 +237,7 @@ moment-like concrete class.
 type MomentClassLike interface {
 	// Constructor Methods
 	Moment(
-		milliseconds int64,
+		milliseconds int,
 	) MomentLike
 	MomentFromString(
 		string_ string,
@@ -474,7 +474,7 @@ instance of a duration-like elemental class.
 type DurationLike interface {
 	// Principal Methods
 	GetClass() DurationClassLike
-	GetIntrinsic() int64
+	GetIntrinsic() int
 
 	// Aspect Interfaces
 	Discrete
@@ -507,7 +507,7 @@ instance of a moment-like elemental class.
 type MomentLike interface {
 	// Principal Methods
 	GetClass() MomentClassLike
-	GetIntrinsic() int64
+	GetIntrinsic() int
 
 	// Aspect Interfaces
 	Discrete
@@ -650,14 +650,14 @@ Factored is an aspect interface that defines a set of method signatures
 that must be supported by each instance of a factored elemental class.
 */
 type Factored interface {
-	GetMilliseconds() int64
-	GetSeconds() int64
-	GetMinutes() int64
-	GetHours() int64
-	GetDays() int64
-	GetWeeks() int64
-	GetMonths() int64
-	GetYears() int64
+	GetMilliseconds() int
+	GetSeconds() int
+	GetMinutes() int
+	GetHours() int
+	GetDays() int
+	GetWeeks() int
+	GetMonths() int
+	GetYears() int
 }
 
 /*

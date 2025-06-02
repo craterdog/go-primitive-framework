@@ -33,7 +33,7 @@ func MomentClass() MomentClassLike {
 // Constructor Methods
 
 func (c *momentClass_) Moment(
-	milliseconds int64,
+	milliseconds int,
 ) MomentLike {
 	return moment_(milliseconds)
 }
@@ -102,8 +102,8 @@ func (v moment_) GetClass() MomentClassLike {
 	return momentClass()
 }
 
-func (v moment_) GetIntrinsic() int64 {
-	return int64(v)
+func (v moment_) GetIntrinsic() int {
+	return int(v)
 }
 
 // Attribute Methods
@@ -131,7 +131,7 @@ func (v moment_) AsString() string {
 	var second = v.GetSeconds()
 	var millisecond = v.GetMilliseconds()
 	builder.WriteString("<")
-	builder.WriteString(stc.FormatInt(year, 10))
+	builder.WriteString(stc.FormatInt(int64(year), 10))
 	if month > 1 || day > 1 || hour > 0 || minute > 0 || second > 0 || millisecond > 0 {
 		builder.WriteString("-")
 		builder.WriteString(momentClass().formatOrdinal(month, 2))
@@ -196,59 +196,59 @@ func (v moment_) AsYears() float64 {
 
 // Factored Methods
 
-func (v moment_) GetMilliseconds() int64 {
+func (v moment_) GetMilliseconds() int {
 	var time = v.asTime()
 	var milliseconds = time.Nanosecond() / 1e6
-	return int64(milliseconds)
+	return int(milliseconds)
 }
 
-func (v moment_) GetSeconds() int64 {
+func (v moment_) GetSeconds() int {
 	var time = v.asTime()
 	var seconds = time.Second()
-	return int64(seconds)
+	return int(seconds)
 }
 
-func (v moment_) GetMinutes() int64 {
+func (v moment_) GetMinutes() int {
 	var time = v.asTime()
 	var minutes = time.Minute()
-	return int64(minutes)
+	return int(minutes)
 }
 
-func (v moment_) GetHours() int64 {
+func (v moment_) GetHours() int {
 	var time = v.asTime()
 	var hours = time.Hour()
-	return int64(hours)
+	return int(hours)
 }
 
-func (v moment_) GetDays() int64 {
+func (v moment_) GetDays() int {
 	var time = v.asTime()
 	var days = time.Day()
-	return int64(days)
+	return int(days)
 }
 
-func (v moment_) GetWeeks() int64 {
+func (v moment_) GetWeeks() int {
 	var time = v.asTime()
 	var _, weeks = time.ISOWeek()
-	return int64(weeks)
+	return int(weeks)
 }
 
-func (v moment_) GetMonths() int64 {
+func (v moment_) GetMonths() int {
 	var time = v.asTime()
 	var months = time.Month()
-	return int64(months)
+	return int(months)
 }
 
-func (v moment_) GetYears() int64 {
+func (v moment_) GetYears() int {
 	var time = v.asTime()
 	var years = time.Year()
-	return int64(years)
+	return int(years)
 }
 
 // PROTECTED INTERFACE
 
 // Private Methods
 
-func (c *momentClass_) formatOrdinal(ordinal int64, digits int) string {
+func (c *momentClass_) formatOrdinal(ordinal int, digits int) string {
 	return fmt.Sprintf("%0"+stc.Itoa(digits)+"d", ordinal)
 }
 
@@ -351,7 +351,7 @@ var momentMatcher_ = reg.MustCompile(
 
 // Instance Structure
 
-type moment_ int64
+type moment_ int
 
 // Class Structure
 

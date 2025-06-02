@@ -32,7 +32,7 @@ func DurationClass() DurationClassLike {
 // Constructor Methods
 
 func (c *durationClass_) Duration(
-	milliseconds int64,
+	milliseconds int,
 ) DurationLike {
 	return duration_(milliseconds)
 }
@@ -61,31 +61,31 @@ func (c *durationClass_) Maximum() DurationLike {
 	return c.maximum_
 }
 
-func (c *durationClass_) MillisecondsPerSecond() int64 {
+func (c *durationClass_) MillisecondsPerSecond() int {
 	return c.millisecondsPerSecond_
 }
 
-func (c *durationClass_) MillisecondsPerMinute() int64 {
+func (c *durationClass_) MillisecondsPerMinute() int {
 	return c.millisecondsPerMinute_
 }
 
-func (c *durationClass_) MillisecondsPerHour() int64 {
+func (c *durationClass_) MillisecondsPerHour() int {
 	return c.millisecondsPerHour_
 }
 
-func (c *durationClass_) MillisecondsPerDay() int64 {
+func (c *durationClass_) MillisecondsPerDay() int {
 	return c.millisecondsPerDay_
 }
 
-func (c *durationClass_) MillisecondsPerWeek() int64 {
+func (c *durationClass_) MillisecondsPerWeek() int {
 	return c.millisecondsPerWeek_
 }
 
-func (c *durationClass_) MillisecondsPerMonth() int64 {
+func (c *durationClass_) MillisecondsPerMonth() int {
 	return c.millisecondsPerMonth_
 }
 
-func (c *durationClass_) MillisecondsPerYear() int64 {
+func (c *durationClass_) MillisecondsPerYear() int {
 	return c.millisecondsPerYear_
 }
 
@@ -111,8 +111,8 @@ func (v duration_) GetClass() DurationClassLike {
 	return durationClass()
 }
 
-func (v duration_) GetIntrinsic() int64 {
-	return int64(v)
+func (v duration_) GetIntrinsic() int {
+	return int(v)
 }
 
 // Attribute Methods
@@ -137,26 +137,26 @@ func (v duration_) AsString() string {
 	}
 	builder.WriteString("P")
 	var float = mat.Abs(v.AsWeeks())
-	var weeks = int64(float)
+	var weeks = int(float)
 	if float64(weeks) == float {
 		// It is an exact number of weeks.
-		builder.WriteString(stc.FormatInt(weeks, 10))
+		builder.WriteString(stc.FormatInt(int64(weeks), 10))
 		builder.WriteString("W")
 		return builder.String()
 	}
 	var years = v.GetYears()
 	if years > 0 {
-		builder.WriteString(stc.FormatInt(years, 10))
+		builder.WriteString(stc.FormatInt(int64(years), 10))
 		builder.WriteString("Y")
 	}
 	var months = v.GetMonths()
 	if months > 0 {
-		builder.WriteString(stc.FormatInt(months, 10))
+		builder.WriteString(stc.FormatInt(int64(months), 10))
 		builder.WriteString("M")
 	}
 	var days = v.GetDays()
 	if days > 0 {
-		builder.WriteString(stc.FormatInt(days, 10))
+		builder.WriteString(stc.FormatInt(int64(days), 10))
 		builder.WriteString("D")
 	}
 	var hours = v.GetHours()
@@ -169,18 +169,18 @@ func (v duration_) AsString() string {
 	}
 	builder.WriteString("T")
 	if hours > 0 {
-		builder.WriteString(stc.FormatInt(hours, 10))
+		builder.WriteString(stc.FormatInt(int64(hours), 10))
 		builder.WriteString("H")
 	}
 	if minutes > 0 {
-		builder.WriteString(stc.FormatInt(minutes, 10))
+		builder.WriteString(stc.FormatInt(int64(minutes), 10))
 		builder.WriteString("M")
 	}
 	if seconds+milliseconds > 0 {
-		builder.WriteString(stc.FormatInt(seconds, 10))
+		builder.WriteString(stc.FormatInt(int64(seconds), 10))
 		if milliseconds > 0 {
 			builder.WriteString(".")
-			builder.WriteString(stc.FormatInt(milliseconds, 10))
+			builder.WriteString(stc.FormatInt(int64(milliseconds), 10))
 		}
 		builder.WriteString("S")
 	}
@@ -229,18 +229,18 @@ func (v duration_) AsYears() float64 {
 
 // Factored Methods
 
-func (v duration_) GetMilliseconds() int64 {
+func (v duration_) GetMilliseconds() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Strip off everything but the milliseconds.
 	milliseconds = milliseconds % durationClass().millisecondsPerSecond_
 	return milliseconds
 }
 
-func (v duration_) GetSeconds() int64 {
+func (v duration_) GetSeconds() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -262,9 +262,9 @@ func (v duration_) GetSeconds() int64 {
 	return seconds
 }
 
-func (v duration_) GetMinutes() int64 {
+func (v duration_) GetMinutes() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -283,9 +283,9 @@ func (v duration_) GetMinutes() int64 {
 	return minutes
 }
 
-func (v duration_) GetHours() int64 {
+func (v duration_) GetHours() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -301,9 +301,9 @@ func (v duration_) GetHours() int64 {
 	return hours
 }
 
-func (v duration_) GetDays() int64 {
+func (v duration_) GetDays() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -316,9 +316,9 @@ func (v duration_) GetDays() int64 {
 	return days
 }
 
-func (v duration_) GetWeeks() int64 {
+func (v duration_) GetWeeks() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -328,9 +328,9 @@ func (v duration_) GetWeeks() int64 {
 	return weeks
 }
 
-func (v duration_) GetMonths() int64 {
+func (v duration_) GetMonths() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Strip off the years.
 	milliseconds = milliseconds - (v.GetYears() * durationClass().millisecondsPerYear_)
@@ -340,9 +340,9 @@ func (v duration_) GetMonths() int64 {
 	return months
 }
 
-func (v duration_) GetYears() int64 {
+func (v duration_) GetYears() int {
 	// Retrieve the total number of milliseconds.
-	var milliseconds = durationClass().magnitude(int64(v))
+	var milliseconds = durationClass().magnitude(int(v))
 
 	// Convert to years.
 	var years = milliseconds / durationClass().millisecondsPerYear_
@@ -353,7 +353,7 @@ func (v duration_) GetYears() int64 {
 
 // Private Methods
 
-func (c *durationClass_) durationFromMatches(matches []string) int64 {
+func (c *durationClass_) durationFromMatches(matches []string) int {
 	var milliseconds = 0.0
 	var sign = 1.0
 	var isTime = false
@@ -386,10 +386,10 @@ func (c *durationClass_) durationFromMatches(matches []string) int64 {
 			}
 		}
 	}
-	return int64(sign * milliseconds)
+	return int(sign * milliseconds)
 }
 
-func (c *durationClass_) magnitude(value int64) int64 {
+func (c *durationClass_) magnitude(value int) int {
 	if value < 0 {
 		return -value
 	}
@@ -422,7 +422,7 @@ var durationMatcher_ = reg.MustCompile(
 
 // Instance Structure
 
-type duration_ int64
+type duration_ int
 
 // Class Structure
 
@@ -430,13 +430,13 @@ type durationClass_ struct {
 	// Declare the class constants.
 	minimum_               DurationLike
 	maximum_               DurationLike
-	millisecondsPerSecond_ int64
-	millisecondsPerMinute_ int64
-	millisecondsPerHour_   int64
-	millisecondsPerDay_    int64
-	millisecondsPerWeek_   int64
-	millisecondsPerMonth_  int64
-	millisecondsPerYear_   int64
+	millisecondsPerSecond_ int
+	millisecondsPerMinute_ int
+	millisecondsPerHour_   int
+	millisecondsPerDay_    int
+	millisecondsPerWeek_   int
+	millisecondsPerMonth_  int
+	millisecondsPerYear_   int
 	daysPerMonth_          float64
 	daysPerYear_           float64
 	weeksPerMonth_         float64

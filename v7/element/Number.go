@@ -451,16 +451,22 @@ func (v number_) IsNegative() bool {
 func (c *numberClass_) complexFromMatches(matches []string) complex128 {
 	var complex_ complex128
 	switch {
-	case len(matches[2]) > 0:
-		// This is a complex number in rectangular form.
-		var realPart = c.floatFromString(matches[1])
-		var imaginaryPart = c.floatFromString(matches[3][:len(matches[3])-1])
-		complex_ = complex(realPart, imaginaryPart)
-	case len(matches[5]) > 0:
+	case len(matches[1]) > 0:
 		// This is a complex number in polar form.
-		var magnitude = c.floatFromString(matches[4])
-		var phase = c.floatFromString(matches[7])
+		var magnitude = c.floatFromString(matches[1])
+		var phase = c.floatFromString(matches[5])
 		complex_ = cmp.Rect(magnitude, phase)
+	case len(matches[8]) > 0:
+		// This is a complex number in rectangular form.
+		var realPart = c.floatFromString(matches[8])
+		if matches[7] == "-" {
+			realPart = -realPart
+		}
+		var imaginaryPart = c.floatFromString(matches[11])
+		if matches[10] == "-" {
+			imaginaryPart = -imaginaryPart
+		}
+		complex_ = complex(realPart, imaginaryPart)
 	default:
 		// This is a pure (non-complex) number.
 		switch matches[0] {
@@ -474,10 +480,11 @@ func (c *numberClass_) complexFromMatches(matches []string) complex128 {
 			complex_ = complex(0, 1)
 		case "-i":
 			complex_ = complex(0, -1)
-		case "+pi", "pi", "-pi", "+phi", "phi", "-phi":
+		case "+e", "e", "-e", "+phi", "phi", "-phi",
+			"+pi", "pi", "-pi", "+tau", "tau", "-tau":
 			// We must handle the constants that end in "i" separately.
 			complex_ = complex(
-				c.floatFromString(matches[1]),
+				c.floatFromString(matches[14]),
 				0,
 			)
 		default:
@@ -652,13 +659,13 @@ const (
 	exponent_       = "(?:E(?:" + sign_ + ")?(?:" + ordinal_ + "))"
 	float_          = "(?:(?:" + sign_ + ")?(?:" + amplitude_ + "))"
 	fraction_       = "(?:\\.(?:" + base10_ + ")+)"
-	imaginary_      = "(?:(?:" + sign_ + ")?(?:" + amplitude_ + ")i)"
+	imaginary_      = "(?:(?:" + float_ + ")i)"
 	infinity_       = "(?:(?:" + sign_ + ")?(infinity|∞))"
 	ordinal_        = "(?:[1-9](?:" + base10_ + ")*)"
 	polar_          = "(?:(?:" + amplitude_ + ")e\\^(~(0|(?:" + amplitude_ + ")))?i)"
-	real_           = "(?:0|(?:" + float_ + ")|(?:" + infinity_ + ")|(?:" + undefined_ + "))"
-	rectangular_    = "(?:(?:" + float_ + ")(?:" + sign_ + ")(?:" + float_ + ")?i)"
-	sign_           = "(?:\\+|-)"
+	real_           = "(?:(?:" + float_ + ")|0|(?:" + infinity_ + ")|(?:" + undefined_ + "))"
+	rectangular_    = "(?:(?:" + sign_ + ")?(?:" + amplitude_ + ")(?:" + sign_ + ")(?:" + amplitude_ + ")i)"
+	sign_           = "(?:(\\+|-))"
 	transcendental_ = "(?:e|pi|π|tau|τ|phi|φ)"
 	undefined_      = "(?:undefined)"
 )
