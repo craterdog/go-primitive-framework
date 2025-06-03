@@ -13,7 +13,6 @@
 package series
 
 import (
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	age "github.com/craterdog/go-primitive-framework/v7/agent"
 )
 
@@ -28,27 +27,21 @@ func NameClass() NameClassLike {
 // Constructor Methods
 
 func (c *nameClass_) Name(
-	string_ string,
+	intrinsic []Identifier,
 ) NameLike {
-	if uti.IsUndefined(string_) {
-		panic("The \"string\" attribute is required by this class.")
-	}
-	var instance = &name_{
-		// Initialize the instance attributes.
-	}
-	return instance
+	return name_(intrinsic)
 }
 
-func (c *nameClass_) NameFromArray(
-	array []Identifier,
+func (c *nameClass_) NameFromSequence(
+	sequence Sequential[Identifier],
 ) NameLike {
 	var instance NameLike
 	// TBD - Add the constructor implementation.
 	return instance
 }
 
-func (c *nameClass_) NameFromSequence(
-	sequence Sequential[Identifier],
+func (c *nameClass_) NameFromString(
+	string_ string,
 ) NameLike {
 	var instance NameLike
 	// TBD - Add the constructor implementation.
@@ -72,47 +65,37 @@ func (c *nameClass_) Concatenate(
 
 // Principal Methods
 
-func (v *name_) GetClass() NameClassLike {
+func (v name_) GetClass() NameClassLike {
 	return nameClass()
+}
+
+func (v name_) GetIntrinsic() []Identifier {
+	return []Identifier(v)
 }
 
 // Attribute Methods
 
-// Intrinsic[[]Identifier] Methods
-
-func (v *name_) GetIntrinsic() []Identifier {
-	var result_ []Identifier
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v *name_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
-}
-
 // Sequential[Identifier] Methods
 
-func (v *name_) IsEmpty() bool {
+func (v name_) IsEmpty() bool {
 	var result_ bool
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *name_) GetSize() age.Size {
-	var result_ age.Size
+func (v name_) GetSize() uint {
+	var result_ uint
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *name_) AsArray() []Identifier {
+func (v name_) AsArray() []Identifier {
 	var result_ []Identifier
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *name_) GetValue(
+func (v name_) GetValue(
 	index Index,
 ) Identifier {
 	var result_ Identifier
@@ -120,7 +103,7 @@ func (v *name_) GetValue(
 	return result_
 }
 
-func (v *name_) GetValues(
+func (v name_) GetValues(
 	first Index,
 	last Index,
 ) Sequential[Identifier] {
@@ -129,7 +112,7 @@ func (v *name_) GetValues(
 	return result_
 }
 
-func (v *name_) GetIterator() age.IteratorLike[Identifier] {
+func (v name_) GetIterator() age.IteratorLike[Identifier] {
 	var result_ age.IteratorLike[Identifier]
 	// TBD - Add the method implementation.
 	return result_
@@ -141,9 +124,7 @@ func (v *name_) GetIterator() age.IteratorLike[Identifier] {
 
 // Instance Structure
 
-type name_ struct {
-	// Declare the instance attributes.
-}
+type name_ []Identifier
 
 // Class Structure
 

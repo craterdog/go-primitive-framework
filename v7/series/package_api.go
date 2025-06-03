@@ -87,13 +87,13 @@ binary-like concrete class.
 type BinaryClassLike interface {
 	// Constructor Methods
 	Binary(
-		string_ string,
-	) BinaryLike
-	BinaryFromArray(
-		array []byte,
+		intrinsic []byte,
 	) BinaryLike
 	BinaryFromSequence(
 		sequence Sequential[byte],
+	) BinaryLike
+	BinaryFromBase64(
+		base64 string,
 	) BinaryLike
 
 	// Function Methods
@@ -130,13 +130,13 @@ bytecode-like concrete class.
 type BytecodeClassLike interface {
 	// Constructor Methods
 	Bytecode(
-		string_ string,
-	) BytecodeLike
-	BytecodeFromArray(
-		array []Instruction,
+		intrinsic []Instruction,
 	) BytecodeLike
 	BytecodeFromSequence(
 		sequence Sequential[Instruction],
+	) BytecodeLike
+	BytecodeFromString(
+		string_ string,
 	) BytecodeLike
 }
 
@@ -148,13 +148,13 @@ name-like concrete class.
 type NameClassLike interface {
 	// Constructor Methods
 	Name(
-		string_ string,
-	) NameLike
-	NameFromArray(
-		array []Identifier,
+		intrinsic []Identifier,
 	) NameLike
 	NameFromSequence(
 		sequence Sequential[Identifier],
+	) NameLike
+	NameFromString(
+		string_ string,
 	) NameLike
 
 	// Function Methods
@@ -172,13 +172,13 @@ narrative-like concrete class.
 type NarrativeClassLike interface {
 	// Constructor Methods
 	Narrative(
-		string_ string,
-	) NarrativeLike
-	NarrativeFromArray(
-		array []Line,
+		intrinsic []Line,
 	) NarrativeLike
 	NarrativeFromSequence(
 		sequence Sequential[Line],
+	) NarrativeLike
+	NarrativeFromString(
+		string_ string,
 	) NarrativeLike
 
 	// Function Methods
@@ -189,83 +189,20 @@ type NarrativeClassLike interface {
 }
 
 /*
-QuoteClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-quote-like concrete class.
-*/
-type QuoteClassLike interface {
-	// Constructor Methods
-	Quote(
-		string_ string,
-	) QuoteLike
-	QuoteFromArray(
-		array []rune,
-	) QuoteLike
-	QuoteFromSequence(
-		sequence Sequential[rune],
-	) QuoteLike
-
-	// Function Methods
-	Concatenate(
-		first QuoteLike,
-		second QuoteLike,
-	) QuoteLike
-}
-
-/*
-SymbolClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-symbol-like concrete class.
-*/
-type SymbolClassLike interface {
-	// Constructor Methods
-	Symbol(
-		string_ string,
-	) SymbolLike
-	SymbolFromArray(
-		array []rune,
-	) SymbolLike
-	SymbolFromSequence(
-		sequence Sequential[rune],
-	) SymbolLike
-}
-
-/*
-TagClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-tag-like concrete class.
-*/
-type TagClassLike interface {
-	// Constructor Methods
-	Tag(
-		string_ string,
-	) TagLike
-	TagWithSize(
-		size age.Size,
-	) TagLike
-	TagFromArray(
-		array []byte,
-	) TagLike
-	TagFromSequence(
-		sequence Sequential[byte],
-	) TagLike
-}
-
-/*
 VersionClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 version-like concrete class.
 */
 type VersionClassLike interface {
 	// Constructor Methods
-	VersionFromString(
-		string_ string,
-	) VersionLike
-	VersionFromArray(
-		array []Ordinal,
+	Version(
+		intrinsic []Ordinal,
 	) VersionLike
 	VersionFromSequence(
 		sequence Sequential[Ordinal],
+	) VersionLike
+	VersionFromString(
+		string_ string,
 	) VersionLike
 
 	// Function Methods
@@ -293,9 +230,9 @@ concrete binary-like class.
 type BinaryLike interface {
 	// Principal Methods
 	GetClass() BinaryClassLike
+	GetIntrinsic() []byte
 
 	// Aspect Interfaces
-	Intrinsic[[]byte]
 	Sequential[byte]
 }
 
@@ -307,9 +244,9 @@ concrete bytecode-like class.
 type BytecodeLike interface {
 	// Principal Methods
 	GetClass() BytecodeClassLike
+	GetIntrinsic() []Instruction
 
 	// Aspect Interfaces
-	Intrinsic[[]Instruction]
 	Sequential[Instruction]
 }
 
@@ -321,9 +258,9 @@ concrete name-like class.
 type NameLike interface {
 	// Principal Methods
 	GetClass() NameClassLike
+	GetIntrinsic() []Identifier
 
 	// Aspect Interfaces
-	Intrinsic[[]Identifier]
 	Sequential[Identifier]
 }
 
@@ -335,52 +272,10 @@ concrete narrative-like class.
 type NarrativeLike interface {
 	// Principal Methods
 	GetClass() NarrativeClassLike
+	GetIntrinsic() []Line
 
 	// Aspect Interfaces
-	Intrinsic[string]
 	Sequential[Line]
-}
-
-/*
-QuoteLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete quote-like class.
-*/
-type QuoteLike interface {
-	// Principal Methods
-	GetClass() QuoteClassLike
-
-	// Aspect Interfaces
-	Intrinsic[string]
-	Sequential[rune]
-}
-
-/*
-SymbolLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete symbol-like class.
-*/
-type SymbolLike interface {
-	// Principal Methods
-	GetClass() SymbolClassLike
-
-	// Aspect Interfaces
-	Intrinsic[string]
-	Sequential[rune]
-}
-
-/*
-TagLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete tag-like class.
-*/
-type TagLike interface {
-	// Principal Methods
-	GetClass() TagClassLike
-
-	// Aspect Interfaces
-	Intrinsic[string]
-	Sequential[byte]
 }
 
 /*
@@ -391,22 +286,13 @@ concrete version-like class.
 type VersionLike interface {
 	// Principal Methods
 	GetClass() VersionClassLike
+	GetIntrinsic() []Ordinal
 
 	// Aspect Interfaces
-	Intrinsic[[]Ordinal]
 	Sequential[Ordinal]
 }
 
 // ASPECT DECLARATIONS
-
-/*
-Intrinsic[V any] is an aspect interface that declares a set of method signatures
-that must be supported by each instance of an intrinsic concrete class.
-*/
-type Intrinsic[V any] interface {
-	GetIntrinsic() V
-	AsString() string
-}
 
 /*
 Sequential[V any] is an aspect interface that declares a set of method
@@ -415,7 +301,7 @@ class.
 */
 type Sequential[V any] interface {
 	IsEmpty() bool
-	GetSize() age.Size
+	GetSize() uint
 	AsArray() []V
 	GetValue(
 		index Index,

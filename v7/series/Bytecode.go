@@ -13,7 +13,6 @@
 package series
 
 import (
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	age "github.com/craterdog/go-primitive-framework/v7/agent"
 )
 
@@ -28,27 +27,21 @@ func BytecodeClass() BytecodeClassLike {
 // Constructor Methods
 
 func (c *bytecodeClass_) Bytecode(
-	string_ string,
+	intrinsic []Instruction,
 ) BytecodeLike {
-	if uti.IsUndefined(string_) {
-		panic("The \"string\" attribute is required by this class.")
-	}
-	var instance = &bytecode_{
-		// Initialize the instance attributes.
-	}
-	return instance
+	return bytecode_(intrinsic)
 }
 
-func (c *bytecodeClass_) BytecodeFromArray(
-	array []Instruction,
+func (c *bytecodeClass_) BytecodeFromSequence(
+	sequence Sequential[Instruction],
 ) BytecodeLike {
 	var instance BytecodeLike
 	// TBD - Add the constructor implementation.
 	return instance
 }
 
-func (c *bytecodeClass_) BytecodeFromSequence(
-	sequence Sequential[Instruction],
+func (c *bytecodeClass_) BytecodeFromString(
+	string_ string,
 ) BytecodeLike {
 	var instance BytecodeLike
 	// TBD - Add the constructor implementation.
@@ -63,47 +56,37 @@ func (c *bytecodeClass_) BytecodeFromSequence(
 
 // Principal Methods
 
-func (v *bytecode_) GetClass() BytecodeClassLike {
+func (v bytecode_) GetClass() BytecodeClassLike {
 	return bytecodeClass()
+}
+
+func (v bytecode_) GetIntrinsic() []Instruction {
+	return []Instruction(v)
 }
 
 // Attribute Methods
 
-// Intrinsic[[]Instruction] Methods
-
-func (v *bytecode_) GetIntrinsic() []Instruction {
-	var result_ []Instruction
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v *bytecode_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
-}
-
 // Sequential[Instruction] Methods
 
-func (v *bytecode_) IsEmpty() bool {
+func (v bytecode_) IsEmpty() bool {
 	var result_ bool
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *bytecode_) GetSize() age.Size {
-	var result_ age.Size
+func (v bytecode_) GetSize() uint {
+	var result_ uint
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *bytecode_) AsArray() []Instruction {
+func (v bytecode_) AsArray() []Instruction {
 	var result_ []Instruction
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *bytecode_) GetValue(
+func (v bytecode_) GetValue(
 	index Index,
 ) Instruction {
 	var result_ Instruction
@@ -111,7 +94,7 @@ func (v *bytecode_) GetValue(
 	return result_
 }
 
-func (v *bytecode_) GetValues(
+func (v bytecode_) GetValues(
 	first Index,
 	last Index,
 ) Sequential[Instruction] {
@@ -120,7 +103,7 @@ func (v *bytecode_) GetValues(
 	return result_
 }
 
-func (v *bytecode_) GetIterator() age.IteratorLike[Instruction] {
+func (v bytecode_) GetIterator() age.IteratorLike[Instruction] {
 	var result_ age.IteratorLike[Instruction]
 	// TBD - Add the method implementation.
 	return result_
@@ -132,9 +115,7 @@ func (v *bytecode_) GetIterator() age.IteratorLike[Instruction] {
 
 // Instance Structure
 
-type bytecode_ struct {
-	// Declare the instance attributes.
-}
+type bytecode_ []Instruction
 
 // Class Structure
 

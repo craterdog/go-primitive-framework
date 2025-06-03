@@ -422,6 +422,20 @@ type ProbabilityClassLike interface {
 }
 
 /*
+QuoteClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+quote-like concrete class.
+*/
+type QuoteClassLike interface {
+	// Constructor Methods
+	Quote(
+		string_ string,
+	) QuoteLike
+
+	// Function Methods
+}
+
+/*
 ResourceClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 resource-like concrete class.
@@ -434,6 +448,33 @@ type ResourceClassLike interface {
 	ResourceFromUri(
 		url *uri.URL,
 	) ResourceLike
+}
+
+/*
+SymbolClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+symbol-like concrete class.
+*/
+type SymbolClassLike interface {
+	// Constructor Methods
+	Symbol(
+		string_ string,
+	) SymbolLike
+}
+
+/*
+TagClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+tag-like concrete class.
+*/
+type TagClassLike interface {
+	// Constructor Methods
+	Tag(
+		string_ string,
+	) TagLike
+	TagWithSize(
+		size int,
+	) TagLike
 }
 
 // INSTANCE DECLARATIONS
@@ -601,6 +642,17 @@ type ProbabilityLike interface {
 }
 
 /*
+QuoteLike is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete quote-like class.
+*/
+type QuoteLike interface {
+	// Principal Methods
+	GetClass() QuoteClassLike
+	GetIntrinsic() string
+}
+
+/*
 ResourceLike is an instance interface that defines the complete set of
 instance attributes, abstractions and methods that must be supported by each
 instance of a resource-like elemental class.
@@ -614,6 +666,28 @@ type ResourceLike interface {
 	// Aspect Interfaces
 	Lexical
 	Segmented
+}
+
+/*
+SymbolLike is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete symbol-like class.
+*/
+type SymbolLike interface {
+	// Principal Methods
+	GetClass() SymbolClassLike
+	GetIntrinsic() string
+}
+
+/*
+TagLike is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete tag-like class.
+*/
+type TagLike interface {
+	// Principal Methods
+	GetClass() TagClassLike
+	GetIntrinsic() string
 }
 
 // ASPECT DECLARATIONS

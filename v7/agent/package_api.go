@@ -33,14 +33,9 @@ import ()
 // TYPE DECLARATIONS
 
 /*
-Size is a constrained type representing the size or capacity of something.
-*/
-type Size uint
-
-/*
 Slot is a constrained type representing the slot between to items in a sequence.
 */
-type Slot Size
+type Slot uint
 
 // FUNCTIONAL DECLARATIONS
 
@@ -77,7 +72,7 @@ type IteratorLike[V any] interface {
 	GetNext() V
 
 	// Attribute Methods
-	GetSize() Size
+	GetSize() uint
 	GetSlot() Slot
 	SetSlot(
 		slot Slot,

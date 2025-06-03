@@ -13,7 +13,6 @@
 package series
 
 import (
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	age "github.com/craterdog/go-primitive-framework/v7/agent"
 )
 
@@ -28,27 +27,21 @@ func BinaryClass() BinaryClassLike {
 // Constructor Methods
 
 func (c *binaryClass_) Binary(
-	string_ string,
+	intrinsic []byte,
 ) BinaryLike {
-	if uti.IsUndefined(string_) {
-		panic("The \"string\" attribute is required by this class.")
-	}
-	var instance = &binary_{
-		// Initialize the instance attributes.
-	}
-	return instance
+	return binary_(intrinsic)
 }
 
-func (c *binaryClass_) BinaryFromArray(
-	array []byte,
+func (c *binaryClass_) BinaryFromSequence(
+	sequence Sequential[byte],
 ) BinaryLike {
 	var instance BinaryLike
 	// TBD - Add the constructor implementation.
 	return instance
 }
 
-func (c *binaryClass_) BinaryFromSequence(
-	sequence Sequential[byte],
+func (c *binaryClass_) BinaryFromBase64(
+	base64 string,
 ) BinaryLike {
 	var instance BinaryLike
 	// TBD - Add the constructor implementation.
@@ -116,47 +109,37 @@ func (c *binaryClass_) Concatenate(
 
 // Principal Methods
 
-func (v *binary_) GetClass() BinaryClassLike {
+func (v binary_) GetClass() BinaryClassLike {
 	return binaryClass()
+}
+
+func (v binary_) GetIntrinsic() []byte {
+	return []byte(v)
 }
 
 // Attribute Methods
 
-// Intrinsic[[]byte] Methods
-
-func (v *binary_) GetIntrinsic() []byte {
-	var result_ []byte
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v *binary_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
-}
-
 // Sequential[byte] Methods
 
-func (v *binary_) IsEmpty() bool {
+func (v binary_) IsEmpty() bool {
 	var result_ bool
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *binary_) GetSize() age.Size {
-	var result_ age.Size
+func (v binary_) GetSize() uint {
+	var result_ uint
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *binary_) AsArray() []byte {
+func (v binary_) AsArray() []byte {
 	var result_ []byte
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *binary_) GetValue(
+func (v binary_) GetValue(
 	index Index,
 ) byte {
 	var result_ byte
@@ -164,7 +147,7 @@ func (v *binary_) GetValue(
 	return result_
 }
 
-func (v *binary_) GetValues(
+func (v binary_) GetValues(
 	first Index,
 	last Index,
 ) Sequential[byte] {
@@ -173,7 +156,7 @@ func (v *binary_) GetValues(
 	return result_
 }
 
-func (v *binary_) GetIterator() age.IteratorLike[byte] {
+func (v binary_) GetIterator() age.IteratorLike[byte] {
 	var result_ age.IteratorLike[byte]
 	// TBD - Add the method implementation.
 	return result_
@@ -185,9 +168,7 @@ func (v *binary_) GetIterator() age.IteratorLike[byte] {
 
 // Instance Structure
 
-type binary_ struct {
-	// Declare the instance attributes.
-}
+type binary_ []byte
 
 // Class Structure
 

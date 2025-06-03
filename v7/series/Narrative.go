@@ -13,7 +13,6 @@
 package series
 
 import (
-	uti "github.com/craterdog/go-missing-utilities/v7"
 	age "github.com/craterdog/go-primitive-framework/v7/agent"
 )
 
@@ -28,27 +27,21 @@ func NarrativeClass() NarrativeClassLike {
 // Constructor Methods
 
 func (c *narrativeClass_) Narrative(
-	string_ string,
+	intrinsic []Line,
 ) NarrativeLike {
-	if uti.IsUndefined(string_) {
-		panic("The \"string\" attribute is required by this class.")
-	}
-	var instance = &narrative_{
-		// Initialize the instance attributes.
-	}
-	return instance
+	return narrative_(intrinsic)
 }
 
-func (c *narrativeClass_) NarrativeFromArray(
-	array []Line,
+func (c *narrativeClass_) NarrativeFromSequence(
+	sequence Sequential[Line],
 ) NarrativeLike {
 	var instance NarrativeLike
 	// TBD - Add the constructor implementation.
 	return instance
 }
 
-func (c *narrativeClass_) NarrativeFromSequence(
-	sequence Sequential[Line],
+func (c *narrativeClass_) NarrativeFromString(
+	string_ string,
 ) NarrativeLike {
 	var instance NarrativeLike
 	// TBD - Add the constructor implementation.
@@ -72,47 +65,37 @@ func (c *narrativeClass_) Concatenate(
 
 // Principal Methods
 
-func (v *narrative_) GetClass() NarrativeClassLike {
+func (v narrative_) GetClass() NarrativeClassLike {
 	return narrativeClass()
+}
+
+func (v narrative_) GetIntrinsic() []Line {
+	return []Line(v)
 }
 
 // Attribute Methods
 
-// Intrinsic[string] Methods
-
-func (v *narrative_) GetIntrinsic() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v *narrative_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
-}
-
 // Sequential[Line] Methods
 
-func (v *narrative_) IsEmpty() bool {
+func (v narrative_) IsEmpty() bool {
 	var result_ bool
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *narrative_) GetSize() age.Size {
-	var result_ age.Size
+func (v narrative_) GetSize() uint {
+	var result_ uint
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *narrative_) AsArray() []Line {
+func (v narrative_) AsArray() []Line {
 	var result_ []Line
 	// TBD - Add the method implementation.
 	return result_
 }
 
-func (v *narrative_) GetValue(
+func (v narrative_) GetValue(
 	index Index,
 ) Line {
 	var result_ Line
@@ -120,7 +103,7 @@ func (v *narrative_) GetValue(
 	return result_
 }
 
-func (v *narrative_) GetValues(
+func (v narrative_) GetValues(
 	first Index,
 	last Index,
 ) Sequential[Line] {
@@ -129,7 +112,7 @@ func (v *narrative_) GetValues(
 	return result_
 }
 
-func (v *narrative_) GetIterator() age.IteratorLike[Line] {
+func (v narrative_) GetIterator() age.IteratorLike[Line] {
 	var result_ age.IteratorLike[Line]
 	// TBD - Add the method implementation.
 	return result_
@@ -141,9 +124,7 @@ func (v *narrative_) GetIterator() age.IteratorLike[Line] {
 
 // Instance Structure
 
-type narrative_ struct {
-	// Declare the instance attributes.
-}
+type narrative_ []Line
 
 // Class Structure
 
