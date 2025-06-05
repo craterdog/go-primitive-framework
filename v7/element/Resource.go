@@ -32,7 +32,7 @@ func ResourceClass() ResourceClassLike {
 func (c *resourceClass_) Resource(
 	string_ string,
 ) ResourceLike {
-	var matches = resourceMatcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the resource constructor method: %s",
@@ -114,6 +114,10 @@ func (v resource_) GetFragment() string {
 
 // PROTECTED INTERFACE
 
+func (v resource_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 // NOTE:
@@ -133,11 +137,6 @@ const (
 	alphanumeric_ = "(?:(?:" + alpha_ + ")|(?:" + base10_ + "))"
 )
 
-var resourceMatcher_ = reg.MustCompile(
-	"^(?:<((" + scheme_ + "):(//(" + authority_ + "))?(" + path_ +
-		")(\\?(" + query_ + "))?(?:#(" + fragment_ + "))?)>)",
-)
-
 // Instance Structure
 
 type resource_ string
@@ -146,6 +145,7 @@ type resource_ string
 
 type resourceClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 }
 
 // Class Reference
@@ -156,4 +156,8 @@ func resourceClass() *resourceClass_ {
 
 var resourceClassReference_ = &resourceClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile(
+		"^(?:<((" + scheme_ + "):(//(" + authority_ + "))?(" + path_ +
+			")(\\?(" + query_ + "))?(?:#(" + fragment_ + "))?)>)",
+	),
 }

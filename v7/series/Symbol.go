@@ -10,9 +10,11 @@
 ................................................................................
 */
 
-package element
+package series
 
-import ()
+import (
+	col "github.com/craterdog/go-collection-framework/v7"
+)
 
 // CLASS INTERFACE
 
@@ -30,9 +32,34 @@ func (c *symbolClass_) Symbol(
 	return symbol_(string_)
 }
 
+func (c *symbolClass_) SymbolFromSequence(
+	sequence col.Sequential[rune],
+) SymbolLike {
+	var instance SymbolLike
+	// TBD - Add the constructor implementation.
+	return instance
+}
+
+func (c *symbolClass_) SymbolFromString(
+	string_ string,
+) SymbolLike {
+	var instance SymbolLike
+	// TBD - Add the constructor implementation.
+	return instance
+}
+
 // Constant Methods
 
 // Function Methods
+
+func (c *symbolClass_) Concatenate(
+	first SymbolLike,
+	second SymbolLike,
+) SymbolLike {
+	var result_ SymbolLike
+	// TBD - Add the function implementation.
+	return result_
+}
 
 // INSTANCE INTERFACE
 
@@ -46,7 +73,15 @@ func (v symbol_) GetIntrinsic() string {
 	return string(v)
 }
 
+func (v symbol_) AsString() string {
+	var result_ string
+	// TBD - Add the method implementation.
+	return result_
+}
+
 // Attribute Methods
+
+// col.Sequential[rune] Methods
 
 // PROTECTED INTERFACE
 

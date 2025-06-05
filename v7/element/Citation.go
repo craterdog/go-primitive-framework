@@ -31,7 +31,7 @@ func CitationClass() CitationClassLike {
 func (c *citationClass_) Citation(
 	string_ string,
 ) CitationLike {
-	if !citationMatcher_.MatchString(string_) {
+	if !c.matcher_.MatchString(string_) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the citation constructor method: %s",
 			string_,
@@ -81,6 +81,10 @@ func (v citation_) GetVersion() string {
 
 // PROTECTED INTERFACE
 
+func (v citation_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 // NOTE:
@@ -100,10 +104,6 @@ const (
 	version_    = "(?:v(?:" + ordinal_ + ")(\\.(?:" + ordinal_ + "))*)"
 )
 
-var citationMatcher_ = reg.MustCompile(
-	"^(?:(?:" + name_ + ")@(?:" + version_ + "))",
-)
-
 // Instance Structure
 
 type citation_ string
@@ -112,6 +112,7 @@ type citation_ string
 
 type citationClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 }
 
 // Class Reference
@@ -122,4 +123,5 @@ func citationClass() *citationClass_ {
 
 var citationClassReference_ = &citationClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile("^(?:(?:" + name_ + ")@(?:" + version_ + "))"),
 }

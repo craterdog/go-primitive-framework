@@ -10,9 +10,12 @@
 ................................................................................
 */
 
-package element
+package series
 
-import ()
+import (
+	col "github.com/craterdog/go-collection-framework/v7"
+	uti "github.com/craterdog/go-missing-utilities/v7"
+)
 
 // CLASS INTERFACE
 
@@ -25,20 +28,51 @@ func TagClass() TagClassLike {
 // Constructor Methods
 
 func (c *tagClass_) Tag(
-	string_ string,
+	bytes []byte,
 ) TagLike {
-	return tag_(string_)
+	return tag_(bytes)
 }
 
 func (c *tagClass_) TagWithSize(
-	size int,
+	size uti.Ordinal,
 ) TagLike {
-	return tag_("")
+	if uti.IsUndefined(size) {
+		panic("The \"size\" attribute is required by this class.")
+	}
+	var instance = &tag_{
+		// Initialize the instance attributes.
+	}
+	return instance
+}
+
+func (c *tagClass_) TagFromSequence(
+	sequence col.Sequential[byte],
+) TagLike {
+	var instance TagLike
+	// TBD - Add the constructor implementation.
+	return instance
+}
+
+func (c *tagClass_) TagFromString(
+	string_ string,
+) TagLike {
+	var instance TagLike
+	// TBD - Add the constructor implementation.
+	return instance
 }
 
 // Constant Methods
 
 // Function Methods
+
+func (c *tagClass_) Concatenate(
+	first TagLike,
+	second TagLike,
+) TagLike {
+	var result_ TagLike
+	// TBD - Add the function implementation.
+	return result_
+}
 
 // INSTANCE INTERFACE
 
@@ -48,11 +82,19 @@ func (v tag_) GetClass() TagClassLike {
 	return tagClass()
 }
 
-func (v tag_) GetIntrinsic() string {
-	return string(v)
+func (v tag_) GetIntrinsic() []byte {
+	return []byte(v)
+}
+
+func (v tag_) AsString() string {
+	var result_ string
+	// TBD - Add the method implementation.
+	return result_
 }
 
 // Attribute Methods
+
+// col.Sequential[byte] Methods
 
 // PROTECTED INTERFACE
 
@@ -60,7 +102,7 @@ func (v tag_) GetIntrinsic() string {
 
 // Instance Structure
 
-type tag_ string
+type tag_ []byte
 
 // Class Structure
 

@@ -31,7 +31,9 @@ on interfaces, not on each other.
 package series
 
 import (
-	age "github.com/craterdog/go-primitive-framework/v7/agent"
+	col "github.com/craterdog/go-collection-framework/v7"
+	uti "github.com/craterdog/go-missing-utilities/v7"
+	reg "regexp"
 )
 
 // TYPE DECLARATIONS
@@ -43,24 +45,6 @@ Identifier is a constrained type representing a string of the form:
 type Identifier string
 
 /*
-Index is a constrained type representing the positive (or negative) ORDINAL
-index of a value in a sequence.  The indices are ordinal rather than zero-based
-which never really made sense except for pointer offsets.  What is the "zeroth
-value" anyway?  It's the "first value", right?  So we start a fresh...
-
-This approach allows for positive indices starting at the beginning of a
-sequence—and negative indices starting at the end of the sequence, as follows:
-
-	    1           2           3             N
-	[value 1] . [value 2] . [value 3] ... [value N]
-	   -N        -(N-1)      -(N-2)          -1
-
-Notice that because the indices are ordinal based, the positive and negative
-indices are symmetrical.  An index can NEVER be zero.
-*/
-type Index int
-
-/*
 Instruction is a constrained type representing a single bytecode instruction.
 */
 type Instruction uint16
@@ -69,11 +53,6 @@ type Instruction uint16
 Line is a constrained type representing a single line of a narrative.
 */
 type Line string
-
-/*
-Ordinal is a constrained type representing a single ordinal number [1..MaxUint).
-*/
-type Ordinal uint
 
 // FUNCTIONAL DECLARATIONS
 
@@ -87,13 +66,13 @@ binary-like concrete class.
 type BinaryClassLike interface {
 	// Constructor Methods
 	Binary(
-		intrinsic []byte,
+		bytes []byte,
 	) BinaryLike
 	BinaryFromSequence(
-		sequence Sequential[byte],
+		sequence col.Sequential[byte],
 	) BinaryLike
-	BinaryFromBase64(
-		base64 string,
+	BinaryFromString(
+		string_ string,
 	) BinaryLike
 
 	// Function Methods
@@ -130,13 +109,19 @@ bytecode-like concrete class.
 type BytecodeClassLike interface {
 	// Constructor Methods
 	Bytecode(
-		intrinsic []Instruction,
+		instructions []Instruction,
 	) BytecodeLike
 	BytecodeFromSequence(
-		sequence Sequential[Instruction],
+		sequence col.Sequential[Instruction],
 	) BytecodeLike
 	BytecodeFromString(
 		string_ string,
+	) BytecodeLike
+
+	// Function Methods
+	Concatenate(
+		first BytecodeLike,
+		second BytecodeLike,
 	) BytecodeLike
 }
 
@@ -148,10 +133,10 @@ name-like concrete class.
 type NameClassLike interface {
 	// Constructor Methods
 	Name(
-		intrinsic []Identifier,
+		identifiers []Identifier,
 	) NameLike
 	NameFromSequence(
-		sequence Sequential[Identifier],
+		sequence col.Sequential[Identifier],
 	) NameLike
 	NameFromString(
 		string_ string,
@@ -172,10 +157,10 @@ narrative-like concrete class.
 type NarrativeClassLike interface {
 	// Constructor Methods
 	Narrative(
-		intrinsic []Line,
+		lines []Line,
 	) NarrativeLike
 	NarrativeFromSequence(
-		sequence Sequential[Line],
+		sequence col.Sequential[Line],
 	) NarrativeLike
 	NarrativeFromString(
 		string_ string,
@@ -189,6 +174,109 @@ type NarrativeClassLike interface {
 }
 
 /*
+PatternClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+pattern-like concrete class.
+*/
+type PatternClassLike interface {
+	// Constructor Methods
+	Pattern(
+		string_ string,
+	) PatternLike
+	PatternFromSequence(
+		sequence col.Sequential[rune],
+	) PatternLike
+	PatternFromString(
+		string_ string,
+	) PatternLike
+
+	// Constant Methods
+	None() PatternLike
+	Any() PatternLike
+
+	// Function Methods
+	Concatenate(
+		first PatternLike,
+		second PatternLike,
+	) PatternLike
+}
+
+/*
+QuoteClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+quote-like concrete class.
+*/
+type QuoteClassLike interface {
+	// Constructor Methods
+	Quote(
+		string_ string,
+	) QuoteLike
+	QuoteFromSequence(
+		sequence col.Sequential[rune],
+	) QuoteLike
+	QuoteFromString(
+		string_ string,
+	) QuoteLike
+
+	// Function Methods
+	Concatenate(
+		first QuoteLike,
+		second QuoteLike,
+	) QuoteLike
+}
+
+/*
+SymbolClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+symbol-like concrete class.
+*/
+type SymbolClassLike interface {
+	// Constructor Methods
+	Symbol(
+		string_ string,
+	) SymbolLike
+	SymbolFromSequence(
+		sequence col.Sequential[rune],
+	) SymbolLike
+	SymbolFromString(
+		string_ string,
+	) SymbolLike
+
+	// Function Methods
+	Concatenate(
+		first SymbolLike,
+		second SymbolLike,
+	) SymbolLike
+}
+
+/*
+TagClassLike is a class interface that defines the complete set of
+class constants, constructors and functions that must be supported by each
+tag-like concrete class.
+*/
+type TagClassLike interface {
+	// Constructor Methods
+	Tag(
+		bytes []byte,
+	) TagLike
+	TagWithSize(
+		size uti.Ordinal,
+	) TagLike
+	TagFromSequence(
+		sequence col.Sequential[byte],
+	) TagLike
+	TagFromString(
+		string_ string,
+	) TagLike
+
+	// Function Methods
+	Concatenate(
+		first TagLike,
+		second TagLike,
+	) TagLike
+}
+
+/*
 VersionClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 version-like concrete class.
@@ -196,10 +284,10 @@ version-like concrete class.
 type VersionClassLike interface {
 	// Constructor Methods
 	Version(
-		intrinsic []Ordinal,
+		ordinals []uti.Ordinal,
 	) VersionLike
 	VersionFromSequence(
-		sequence Sequential[Ordinal],
+		sequence col.Sequential[uti.Ordinal],
 	) VersionLike
 	VersionFromString(
 		string_ string,
@@ -212,7 +300,7 @@ type VersionClassLike interface {
 	) bool
 	GetNextVersion(
 		current VersionLike,
-		level Ordinal,
+		level uti.Ordinal,
 	) VersionLike
 	Concatenate(
 		first VersionLike,
@@ -231,9 +319,10 @@ type BinaryLike interface {
 	// Principal Methods
 	GetClass() BinaryClassLike
 	GetIntrinsic() []byte
+	AsString() string
 
 	// Aspect Interfaces
-	Sequential[byte]
+	col.Sequential[byte]
 }
 
 /*
@@ -245,9 +334,10 @@ type BytecodeLike interface {
 	// Principal Methods
 	GetClass() BytecodeClassLike
 	GetIntrinsic() []Instruction
+	AsString() string
 
 	// Aspect Interfaces
-	Sequential[Instruction]
+	col.Sequential[Instruction]
 }
 
 /*
@@ -259,9 +349,10 @@ type NameLike interface {
 	// Principal Methods
 	GetClass() NameClassLike
 	GetIntrinsic() []Identifier
+	AsString() string
 
 	// Aspect Interfaces
-	Sequential[Identifier]
+	col.Sequential[Identifier]
 }
 
 /*
@@ -273,9 +364,77 @@ type NarrativeLike interface {
 	// Principal Methods
 	GetClass() NarrativeClassLike
 	GetIntrinsic() []Line
+	AsString() string
 
 	// Aspect Interfaces
-	Sequential[Line]
+	col.Sequential[Line]
+}
+
+/*
+PatternLike is an instance interface that defines the complete set of
+instance attributes, abstractions and methods that must be supported by each
+instance of a pattern-like elemental class.
+*/
+type PatternLike interface {
+	// Principal Methods
+	GetClass() PatternClassLike
+	GetIntrinsic() string
+	AsString() string
+	AsRegexp() *reg.Regexp
+	MatchesText(
+		text string,
+	) bool
+	GetMatches(
+		text string,
+	) []string
+
+	// Aspect Interfaces
+	col.Sequential[rune]
+}
+
+/*
+QuoteLike is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete quote-like class.
+*/
+type QuoteLike interface {
+	// Principal Methods
+	GetClass() QuoteClassLike
+	GetIntrinsic() string
+	AsString() string
+
+	// Aspect Interfaces
+	col.Sequential[rune]
+}
+
+/*
+SymbolLike is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete symbol-like class.
+*/
+type SymbolLike interface {
+	// Principal Methods
+	GetClass() SymbolClassLike
+	GetIntrinsic() string
+	AsString() string
+
+	// Aspect Interfaces
+	col.Sequential[rune]
+}
+
+/*
+TagLike is an instance interface that declares the complete set of principal,
+attribute and aspect methods that must be supported by each instance of a
+concrete tag-like class.
+*/
+type TagLike interface {
+	// Principal Methods
+	GetClass() TagClassLike
+	GetIntrinsic() []byte
+	AsString() string
+
+	// Aspect Interfaces
+	col.Sequential[byte]
 }
 
 /*
@@ -286,29 +445,11 @@ concrete version-like class.
 type VersionLike interface {
 	// Principal Methods
 	GetClass() VersionClassLike
-	GetIntrinsic() []Ordinal
+	GetIntrinsic() []uti.Ordinal
+	AsString() string
 
 	// Aspect Interfaces
-	Sequential[Ordinal]
+	col.Sequential[uti.Ordinal]
 }
 
 // ASPECT DECLARATIONS
-
-/*
-Sequential[V any] is an aspect interface that declares a set of method
-signatures that must be supported by each instance of a sequential concrete
-class.
-*/
-type Sequential[V any] interface {
-	IsEmpty() bool
-	GetSize() uint
-	AsArray() []V
-	GetValue(
-		index Index,
-	) V
-	GetValues(
-		first Index,
-		last Index,
-	) Sequential[V]
-	GetIterator() age.IteratorLike[V]
-}

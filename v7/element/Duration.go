@@ -40,7 +40,7 @@ func (c *durationClass_) Duration(
 func (c *durationClass_) DurationFromString(
 	string_ string,
 ) DurationLike {
-	var matches = durationMatcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the duration constructor method: %s",
@@ -351,6 +351,10 @@ func (v duration_) GetYears() int {
 
 // PROTECTED INTERFACE
 
+func (v duration_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 func (c *durationClass_) durationFromMatches(matches []string) int {
@@ -414,12 +418,6 @@ const (
 	years_    = "(?:(?:" + timespan_ + ")Y)"
 )
 
-var durationMatcher_ = reg.MustCompile(
-	"^(?:~(?:" + sign_ + ")?P((?:" + weeks_ + ")|((?:" + years_ + ")?(?:" +
-		months_ + ")?(?:" + days_ + ")?(T(?:" + hours_ + ")?(?:" + minutes_ +
-		")?(?:" + seconds_ + ")?)?)))",
-)
-
 // Instance Structure
 
 type duration_ int
@@ -428,6 +426,7 @@ type duration_ int
 
 type durationClass_ struct {
 	// Declare the class constants.
+	matcher_               *reg.Regexp
 	minimum_               DurationLike
 	maximum_               DurationLike
 	millisecondsPerSecond_ int
@@ -450,6 +449,11 @@ func durationClass() *durationClass_ {
 
 var durationClassReference_ = &durationClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile(
+		"^(?:~(?:" + sign_ + ")?P((?:" + weeks_ + ")|((?:" + years_ + ")?(?:" +
+			months_ + ")?(?:" + days_ + ")?(T(?:" + hours_ + ")?(?:" + minutes_ +
+			")?(?:" + seconds_ + ")?)?)))",
+	),
 	minimum_: duration_(0),
 	maximum_: duration_(mat.MaxInt),
 

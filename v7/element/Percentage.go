@@ -46,7 +46,7 @@ func (c *percentageClass_) PercentageFromInteger(
 func (c *percentageClass_) PercentageFromString(
 	string_ string,
 ) PercentageLike {
-	var matches = percentageMatcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the percentage constructor method: %s",
@@ -125,18 +125,11 @@ func (v percentage_) IsNegative() bool {
 
 // PROTECTED INTERFACE
 
-// Private Methods
+func (v percentage_) String() string {
+	return v.AsString()
+}
 
-// NOTE:
-// These private constants are used to define the private regular expression
-// matcher that is used to match legal string patterns for this intrinsic type.
-// Unfortunately there is no way to make them private to this class since they
-// must be TRUE Go constants to be used in this way.  We append an underscore to
-// each name to lessen the chance of a name collision with other private Go
-// class constants in this package.
-var percentageMatcher_ = reg.MustCompile(
-	"^(?:(?:" + real_ + ")%)",
-)
+// Private Methods
 
 // Instance Structure
 
@@ -146,6 +139,7 @@ type percentage_ float64
 
 type percentageClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 }
 
 // Class Reference
@@ -156,4 +150,5 @@ func percentageClass() *percentageClass_ {
 
 var percentageClassReference_ = &percentageClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile("^(?:(?:" + real_ + ")%)"),
 }

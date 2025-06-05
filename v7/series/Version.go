@@ -13,7 +13,8 @@
 package series
 
 import (
-	age "github.com/craterdog/go-primitive-framework/v7/agent"
+	col "github.com/craterdog/go-collection-framework/v7"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 )
 
 // CLASS INTERFACE
@@ -27,13 +28,13 @@ func VersionClass() VersionClassLike {
 // Constructor Methods
 
 func (c *versionClass_) Version(
-	intrinsic []Ordinal,
+	ordinals []uti.Ordinal,
 ) VersionLike {
-	return version_(intrinsic)
+	return version_(ordinals)
 }
 
 func (c *versionClass_) VersionFromSequence(
-	sequence Sequential[Ordinal],
+	sequence col.Sequential[uti.Ordinal],
 ) VersionLike {
 	var instance VersionLike
 	// TBD - Add the constructor implementation.
@@ -63,7 +64,7 @@ func (c *versionClass_) IsValidNextVersion(
 
 func (c *versionClass_) GetNextVersion(
 	current VersionLike,
-	level Ordinal,
+	level uti.Ordinal,
 ) VersionLike {
 	var result_ VersionLike
 	// TBD - Add the function implementation.
@@ -87,54 +88,19 @@ func (v version_) GetClass() VersionClassLike {
 	return versionClass()
 }
 
-func (v version_) GetIntrinsic() []Ordinal {
-	return []Ordinal(v)
+func (v version_) GetIntrinsic() []uti.Ordinal {
+	return []uti.Ordinal(v)
+}
+
+func (v version_) AsString() string {
+	var result_ string
+	// TBD - Add the method implementation.
+	return result_
 }
 
 // Attribute Methods
 
-// Sequential[Ordinal] Methods
-
-func (v version_) IsEmpty() bool {
-	var result_ bool
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v version_) GetSize() uint {
-	var result_ uint
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v version_) AsArray() []Ordinal {
-	var result_ []Ordinal
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v version_) GetValue(
-	index Index,
-) Ordinal {
-	var result_ Ordinal
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v version_) GetValues(
-	first Index,
-	last Index,
-) Sequential[Ordinal] {
-	var result_ Sequential[Ordinal]
-	// TBD - Add the method implementation.
-	return result_
-}
-
-func (v version_) GetIterator() age.IteratorLike[Ordinal] {
-	var result_ age.IteratorLike[Ordinal]
-	// TBD - Add the method implementation.
-	return result_
-}
+// col.Sequential[uti.Ordinal] Methods
 
 // PROTECTED INTERFACE
 
@@ -142,7 +108,7 @@ func (v version_) GetIterator() age.IteratorLike[Ordinal] {
 
 // Instance Structure
 
-type version_ []Ordinal
+type version_ []uti.Ordinal
 
 // Class Structure
 

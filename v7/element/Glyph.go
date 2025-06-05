@@ -46,7 +46,7 @@ func (c *glyphClass_) GlyphFromInteger(
 func (c *glyphClass_) GlyphFromString(
 	string_ string,
 ) GlyphLike {
-	if !glyphMatcher_.MatchString(string_) {
+	if !c.matcher_.MatchString(string_) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the glyph constructor method: %s",
 			string_,
@@ -113,6 +113,10 @@ func (v glyph_) AsString() string {
 
 // PROTECTED INTERFACE
 
+func (v glyph_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 // NOTE:
@@ -129,10 +133,6 @@ const (
 	unicode_ = "(?:(u(?:" + base16_ + "){4})|(U(?:" + base16_ + "){8}))"
 )
 
-var glyphMatcher_ = reg.MustCompile(
-	"^(?:'((?:" + escape_ + ")|[^" + control_ + "])')",
-)
-
 // Instance Structure
 
 type glyph_ rune
@@ -141,6 +141,7 @@ type glyph_ rune
 
 type glyphClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 	minimum_ GlyphLike
 	maximum_ GlyphLike
 }
@@ -153,6 +154,9 @@ func glyphClass() *glyphClass_ {
 
 var glyphClassReference_ = &glyphClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile(
+		"^(?:'((?:" + escape_ + ")|[^" + control_ + "])')",
+	),
 	minimum_: glyph_(0),
 	maximum_: glyph_(mat.MaxInt32),
 }

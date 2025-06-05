@@ -133,6 +133,8 @@ type BooleanClassLike interface {
 	) BooleanLike
 
 	// Constant Methods
+	Minimum() BooleanLike
+	Maximum() BooleanLike
 	False() BooleanLike
 	True() BooleanLike
 
@@ -344,22 +346,6 @@ type NumberClassLike interface {
 }
 
 /*
-PatternClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-pattern-like concrete class.
-*/
-type PatternClassLike interface {
-	// Constructor Methods
-	Pattern(
-		string_ string,
-	) PatternLike
-
-	// Constant Methods
-	None() PatternLike
-	Any() PatternLike
-}
-
-/*
 PercentageClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 percentage-like concrete class.
@@ -422,20 +408,6 @@ type ProbabilityClassLike interface {
 }
 
 /*
-QuoteClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-quote-like concrete class.
-*/
-type QuoteClassLike interface {
-	// Constructor Methods
-	Quote(
-		string_ string,
-	) QuoteLike
-
-	// Function Methods
-}
-
-/*
 ResourceClassLike is a class interface that defines the complete set of
 class constants, constructors and functions that must be supported by each
 resource-like concrete class.
@@ -450,33 +422,6 @@ type ResourceClassLike interface {
 	) ResourceLike
 }
 
-/*
-SymbolClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-symbol-like concrete class.
-*/
-type SymbolClassLike interface {
-	// Constructor Methods
-	Symbol(
-		string_ string,
-	) SymbolLike
-}
-
-/*
-TagClassLike is a class interface that defines the complete set of
-class constants, constructors and functions that must be supported by each
-tag-like concrete class.
-*/
-type TagClassLike interface {
-	// Constructor Methods
-	Tag(
-		string_ string,
-	) TagLike
-	TagWithSize(
-		size int,
-	) TagLike
-}
-
 // INSTANCE DECLARATIONS
 
 /*
@@ -488,11 +433,17 @@ type AngleLike interface {
 	// Principal Methods
 	GetClass() AngleClassLike
 	GetIntrinsic() float64
+	GetParts() (
+		x float64,
+		y float64,
+	)
+	AsString() string
+	InUnits(
+		units Units,
+	) float64
 
 	// Aspect Interfaces
-	Angular
 	Continuous
-	Lexical
 }
 
 /*
@@ -504,10 +455,10 @@ type BooleanLike interface {
 	// Principal Methods
 	GetClass() BooleanClassLike
 	GetIntrinsic() bool
+	AsString() string
 
 	// Aspect Interfaces
 	Discrete
-	Lexical
 }
 
 /*
@@ -519,11 +470,9 @@ type CitationLike interface {
 	// Principal Methods
 	GetClass() CitationClassLike
 	GetIntrinsic() string
-
-	// Aspect Interfaces
-	Lexical
-	Named
-	Versioned
+	GetName() string
+	GetVersion() string
+	AsString() string
 }
 
 /*
@@ -535,13 +484,13 @@ type DurationLike interface {
 	// Principal Methods
 	GetClass() DurationClassLike
 	GetIntrinsic() int
+	AsString() string
 
 	// Aspect Interfaces
 	Discrete
-	Lexical
+	Factored
 	Polarized
 	Temporal
-	Factored
 }
 
 /*
@@ -553,10 +502,10 @@ type GlyphLike interface {
 	// Principal Methods
 	GetClass() GlyphClassLike
 	GetIntrinsic() rune
+	AsString() string
 
 	// Aspect Interfaces
 	Discrete
-	Lexical
 }
 
 /*
@@ -568,12 +517,12 @@ type MomentLike interface {
 	// Principal Methods
 	GetClass() MomentClassLike
 	GetIntrinsic() int
+	AsString() string
 
 	// Aspect Interfaces
 	Discrete
-	Lexical
-	Temporal
 	Factored
+	Temporal
 }
 
 /*
@@ -585,27 +534,15 @@ type NumberLike interface {
 	// Principal Methods
 	GetClass() NumberClassLike
 	GetIntrinsic() complex128
+	GetReal() float64
+	GetImaginary() float64
+	GetMagnitude() float64
+	GetPhase() float64
+	AsString() string
 
 	// Aspect Interfaces
-	Complex
 	Continuous
-	Lexical
 	Polarized
-}
-
-/*
-PatternLike is an instance interface that defines the complete set of
-instance attributes, abstractions and methods that must be supported by each
-instance of a pattern-like elemental class.
-*/
-type PatternLike interface {
-	// Principal Methods
-	GetClass() PatternClassLike
-	GetIntrinsic() string
-
-	// Aspect Interfaces
-	Lexical
-	Matchable
 }
 
 /*
@@ -617,11 +554,11 @@ type PercentageLike interface {
 	// Principal Methods
 	GetClass() PercentageClassLike
 	GetIntrinsic() float64
+	AsString() string
 
 	// Aspect Interfaces
 	Continuous
 	Discrete
-	Lexical
 	Polarized
 }
 
@@ -634,22 +571,11 @@ type ProbabilityLike interface {
 	// Principal Methods
 	GetClass() ProbabilityClassLike
 	GetIntrinsic() float64
+	AsString() string
 
 	// Aspect Interfaces
 	Continuous
 	Discrete
-	Lexical
-}
-
-/*
-QuoteLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete quote-like class.
-*/
-type QuoteLike interface {
-	// Principal Methods
-	GetClass() QuoteClassLike
-	GetIntrinsic() string
 }
 
 /*
@@ -661,61 +587,16 @@ type ResourceLike interface {
 	// Principal Methods
 	GetClass() ResourceClassLike
 	GetIntrinsic() string
+	GetScheme() string
+	GetAuthority() string
+	GetPath() string
+	GetQuery() string
+	GetFragment() string
+	AsString() string
 	AsUri() *uri.URL
-
-	// Aspect Interfaces
-	Lexical
-	Segmented
-}
-
-/*
-SymbolLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete symbol-like class.
-*/
-type SymbolLike interface {
-	// Principal Methods
-	GetClass() SymbolClassLike
-	GetIntrinsic() string
-}
-
-/*
-TagLike is an instance interface that declares the complete set of principal,
-attribute and aspect methods that must be supported by each instance of a
-concrete tag-like class.
-*/
-type TagLike interface {
-	// Principal Methods
-	GetClass() TagClassLike
-	GetIntrinsic() string
 }
 
 // ASPECT DECLARATIONS
-
-/*
-Angular is an aspect interface that declares a set of method signatures that
-must be supported by each instance of an angular concrete class.
-*/
-type Angular interface {
-	InUnits(
-		units Units,
-	) float64
-	GetParts() (
-		x float64,
-		y float64,
-	)
-}
-
-/*
-Complex is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a complex elemental class.
-*/
-type Complex interface {
-	GetReal() float64
-	GetImaginary() float64
-	GetMagnitude() float64
-	GetPhase() float64
-}
 
 /*
 Continuous is an aspect interface that defines a set of method signatures
@@ -754,52 +635,11 @@ type Factored interface {
 }
 
 /*
-Lexical is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a lexical elemental class.
-*/
-type Lexical interface {
-	AsString() string
-}
-
-/*
-Matchable is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a matchable elemental class.
-*/
-type Matchable interface {
-	MatchesText(
-		text string,
-	) bool
-	GetMatches(
-		text string,
-	) []string
-}
-
-/*
-Named is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a named elemental class.
-*/
-type Named interface {
-	GetName() string
-}
-
-/*
 Polarized is an aspect interface that defines a set of method signatures
 that must be supported by each instance of a polarized elemental class.
 */
 type Polarized interface {
 	IsNegative() bool
-}
-
-/*
-Segmented is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a segmented elemental class.
-*/
-type Segmented interface {
-	GetScheme() string
-	GetAuthority() string
-	GetPath() string
-	GetQuery() string
-	GetFragment() string
 }
 
 /*
@@ -815,12 +655,4 @@ type Temporal interface {
 	AsWeeks() float64
 	AsMonths() float64
 	AsYears() float64
-}
-
-/*
-Versioned is an aspect interface that defines a set of method signatures
-that must be supported by each instance of a versioned elemental class.
-*/
-type Versioned interface {
-	GetVersion() string
 }

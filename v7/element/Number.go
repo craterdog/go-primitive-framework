@@ -115,7 +115,7 @@ func (c *numberClass_) NumberFromRectangular(
 func (c *numberClass_) NumberFromString(
 	string_ string,
 ) NumberLike {
-	var matches = numberMatcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the number constructor method: %s",
@@ -444,6 +444,10 @@ func (v number_) IsNegative() bool {
 
 // PROTECTED INTERFACE
 
+func (v number_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 // This private function returns the complex number associated with the
@@ -670,11 +674,6 @@ const (
 	undefined_      = "(?:undefined)"
 )
 
-var numberMatcher_ = reg.MustCompile(
-	"^(?:(?:" + polar_ + ")|(?:" + rectangular_ + ")|(?:" + imaginary_ +
-		")|(?:" + real_ + "))",
-)
-
 // Instance Structure
 
 type number_ complex128
@@ -683,6 +682,7 @@ type number_ complex128
 
 type numberClass_ struct {
 	// Declare the class constants.
+	matcher_   *reg.Regexp
 	minimum_   NumberLike
 	maximum_   NumberLike
 	zero_      NumberLike
@@ -704,6 +704,10 @@ func numberClass() *numberClass_ {
 
 var numberClassReference_ = &numberClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile(
+		"^(?:(?:" + polar_ + ")|(?:" + rectangular_ + ")|(?:" + imaginary_ +
+			")|(?:" + real_ + "))",
+	),
 	maximum_:   number_(complex(mat.Inf(0), mat.Inf(0))),
 	minimum_:   number_(0),
 	zero_:      number_(0),

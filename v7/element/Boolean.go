@@ -38,7 +38,7 @@ func (c *booleanClass_) BooleanFromString(
 	string_ string,
 ) BooleanLike {
 	// Our booleans are more restrictive than the Go strconv package.
-	if !booleanMatcher_.MatchString(string_) {
+	if !c.matcher_.MatchString(string_) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the boolean constructor method: %s",
 			string_,
@@ -50,6 +50,14 @@ func (c *booleanClass_) BooleanFromString(
 }
 
 // Constant Methods
+
+func (c *booleanClass_) Minimum() BooleanLike {
+	return c.minimum_
+}
+
+func (c *booleanClass_) Maximum() BooleanLike {
+	return c.maximum_
+}
 
 func (c *booleanClass_) False() BooleanLike {
 	return c.false_
@@ -138,11 +146,11 @@ func (v boolean_) AsString() string {
 
 // PROTECTED INTERFACE
 
-// Private Methods
+func (v boolean_) String() string {
+	return v.AsString()
+}
 
-var booleanMatcher_ = reg.MustCompile(
-	"^(?:false|true)",
-)
+// Private Methods
 
 // Instance Structure
 
@@ -152,8 +160,11 @@ type boolean_ bool
 
 type booleanClass_ struct {
 	// Declare the class constants.
-	false_ BooleanLike
-	true_  BooleanLike
+	matcher_ *reg.Regexp
+	minimum_ BooleanLike
+	maximum_ BooleanLike
+	false_   BooleanLike
+	true_    BooleanLike
 }
 
 // Class Reference
@@ -164,6 +175,9 @@ func booleanClass() *booleanClass_ {
 
 var booleanClassReference_ = &booleanClass_{
 	// Initialize the class constants.
-	false_: boolean_(false),
-	true_:  boolean_(true),
+	matcher_: reg.MustCompile("^(?:false|true)"),
+	minimum_: boolean_(false),
+	maximum_: boolean_(true),
+	false_:   boolean_(false),
+	true_:    boolean_(true),
 }

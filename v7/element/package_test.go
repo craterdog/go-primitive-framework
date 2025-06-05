@@ -106,11 +106,15 @@ func TestAnglesLibrary(t *tes.T) {
 var BooleanClass = ele.BooleanClass()
 
 func TestFalseBooleans(t *tes.T) {
+	ass.False(t, BooleanClass.Minimum().GetIntrinsic())
+	ass.False(t, BooleanClass.False().GetIntrinsic())
 	var v = BooleanClass.Boolean(false)
 	ass.False(t, v.AsBoolean())
 }
 
 func TestTrueBooleans(t *tes.T) {
+	ass.True(t, BooleanClass.Maximum().GetIntrinsic())
+	ass.True(t, BooleanClass.True().GetIntrinsic())
 	var v = BooleanClass.Boolean(true)
 	ass.True(t, v.AsBoolean())
 }
@@ -664,63 +668,6 @@ func TestNumberLibrary(t *tes.T) {
 	ass.Equal(t, zero, NumberClass.Logarithm(infinity, one))
 	ass.True(t, NumberClass.Logarithm(infinity, infinity).IsUndefined())
 	ass.True(t, NumberClass.Logarithm(infinity, undefined).IsUndefined())
-}
-
-var PatternClass = ele.PatternClass()
-
-func TestNonePattern(t *tes.T) {
-	var v = PatternClass.Pattern(`none`)
-	ass.Equal(t, `none`, v.AsString())
-
-	var text = ""
-	ass.False(t, v.MatchesText(text))
-	ass.Equal(t, []string(nil), v.GetMatches(text))
-
-	text = "anything at all..."
-	ass.False(t, v.MatchesText(text))
-	ass.Equal(t, []string(nil), v.GetMatches(text))
-
-	text = "none"
-	ass.True(t, v.MatchesText(text))
-	ass.Equal(t, []string{text}, v.GetMatches(text))
-}
-
-func TestAnyPattern(t *tes.T) {
-	var v = PatternClass.Pattern(`any`)
-	ass.Equal(t, `any`, v.AsString())
-
-	var text = ""
-	ass.True(t, v.MatchesText(text))
-	ass.Equal(t, []string{text}, v.GetMatches(text))
-
-	text = "anything at all..."
-	ass.True(t, v.MatchesText(text))
-	ass.Equal(t, []string{text}, v.GetMatches(text))
-
-	text = "none"
-	ass.True(t, v.MatchesText(text))
-	ass.Equal(t, []string{text}, v.GetMatches(text))
-}
-
-func TestSomePattern(t *tes.T) {
-	var v = PatternClass.Pattern(`"c(.+t)"?`)
-	ass.Equal(t, `"c(.+t)"?`, v.AsString())
-
-	var text = "ct"
-	ass.False(t, v.MatchesText(text))
-	ass.Equal(t, []string(nil), v.GetMatches(text))
-
-	text = "cat"
-	ass.True(t, v.MatchesText(text))
-	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
-
-	text = "caaat"
-	ass.True(t, v.MatchesText(text))
-	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
-
-	text = "cot"
-	ass.True(t, v.MatchesText(text))
-	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
 }
 
 var PercentageClass = ele.PercentageClass()

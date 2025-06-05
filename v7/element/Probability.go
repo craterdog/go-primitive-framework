@@ -62,7 +62,7 @@ func (c *probabilityClass_) ProbabilityFromBoolean(
 func (c *probabilityClass_) ProbabilityFromString(
 	string_ string,
 ) ProbabilityLike {
-	var matches = probabilityMatcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the probability constructor method: %s",
@@ -192,6 +192,10 @@ func (v probability_) AsString() string {
 
 // PROTECTED INTERFACE
 
+func (v probability_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 func (c *probabilityClass_) randomBoolean() bool {
@@ -210,17 +214,6 @@ func (c *probabilityClass_) randomInteger(max int) int {
 	return int(random.Int64())
 }
 
-// NOTE:
-// These private constants are used to define the private regular expression
-// matcher that is used to match legal string patterns for this intrinsic type.
-// Unfortunately there is no way to make them private to this class since they
-// must be TRUE Go constants to be used in this way.  We append an underscore to
-// each name to lessen the chance of a name collision with other private Go
-// class constants in this package.
-var probabilityMatcher_ = reg.MustCompile(
-	"^(?:p(0(?:" + fraction_ + ")?|1))",
-)
-
 // Instance Structure
 
 type probability_ float64
@@ -229,6 +222,7 @@ type probability_ float64
 
 type probabilityClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 	minimum_ ProbabilityLike
 	maximum_ ProbabilityLike
 }
@@ -241,6 +235,7 @@ func probabilityClass() *probabilityClass_ {
 
 var probabilityClassReference_ = &probabilityClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile("^(?:p(0(?:" + fraction_ + ")?|1))"),
 	maximum_: probability_(1.0),
 	minimum_: probability_(0.0),
 }

@@ -41,7 +41,7 @@ func (c *momentClass_) Moment(
 func (c *momentClass_) MomentFromString(
 	string_ string,
 ) MomentLike {
-	var matches = momentMatcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the moment constructor method: %s",
@@ -246,6 +246,10 @@ func (v moment_) GetYears() int {
 
 // PROTECTED INTERFACE
 
+func (v moment_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 func (c *momentClass_) formatOrdinal(ordinal int, digits int) string {
@@ -343,12 +347,6 @@ const (
 	year_   = "(?:0|(?:" + ordinal_ + "))"
 )
 
-var momentMatcher_ = reg.MustCompile(
-	"^(?:<(?:" + sign_ + ")?(?:" + year_ + ")(-(?:" + month_ + ")(-(?:" +
-		day_ + ")(T(?:" + hour_ + ")(:(?:" + minute_ + ")(:(?:" + second_ +
-		")(?:" + fraction_ + ")?)?)?)?)?)?>)",
-)
-
 // Instance Structure
 
 type moment_ int
@@ -357,6 +355,7 @@ type moment_ int
 
 type momentClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 	minimum_ MomentLike
 	maximum_ MomentLike
 	epoch_   MomentLike
@@ -370,6 +369,11 @@ func momentClass() *momentClass_ {
 
 var momentClassReference_ = &momentClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile(
+		"^(?:<(?:" + sign_ + ")?(?:" + year_ + ")(-(?:" + month_ + ")(-(?:" +
+			day_ + ")(T(?:" + hour_ + ")(:(?:" + minute_ + ")(:(?:" + second_ +
+			")(?:" + fraction_ + ")?)?)?)?)?)?>)",
+	),
 	minimum_: moment_(mat.MinInt),
 	maximum_: moment_(mat.MaxInt),
 	epoch_:   moment_(0),

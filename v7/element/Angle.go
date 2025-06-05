@@ -39,7 +39,7 @@ func (c *angleClass_) Angle(
 func (c *angleClass_) AngleFromString(
 	string_ string,
 ) AngleLike {
-	var matches = angleMatcher_.FindStringSubmatch(string_)
+	var matches = c.matcher_.FindStringSubmatch(string_)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the angle constructor method: %s",
@@ -320,6 +320,10 @@ func (v angle_) AsString() string {
 
 // PROTECTED INTERFACE
 
+func (v angle_) String() string {
+	return v.AsString()
+}
+
 // Private Methods
 
 func (c *angleClass_) angleFromFloat(float float64) angle_ {
@@ -370,17 +374,6 @@ func (c *angleClass_) stringFromAngle(angle angle_) string {
 	return string_
 }
 
-// NOTE:
-// These private constants are used to define the private regular expression
-// matcher that is used to match legal string patterns for this intrinsic type.
-// Unfortunately there is no way to make them private to this class since they
-// must be TRUE Go constants to be used in this way.  We append an underscore to
-// each name to lessen the chance of a name collision with other private Go
-// class constants in this package.
-var angleMatcher_ = reg.MustCompile(
-	"^(?:~(0|(?:" + amplitude_ + ")))",
-)
-
 // Instance Structure
 
 type angle_ float64
@@ -389,6 +382,7 @@ type angle_ float64
 
 type angleClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 	minimum_ AngleLike
 	maximum_ AngleLike
 	zero_    AngleLike
@@ -404,7 +398,8 @@ func angleClass() *angleClass_ {
 
 var angleClassReference_ = &angleClass_{
 	// Initialize the class constants.
-	zero_: angle_(0.0),
-	pi_:   angle_(mat.Pi),
-	tau_:  angle_(2.0 * mat.Pi),
+	matcher_: reg.MustCompile("^(?:~(0|(?:" + amplitude_ + ")))"),
+	zero_:    angle_(0.0),
+	pi_:      angle_(mat.Pi),
+	tau_:     angle_(2.0 * mat.Pi),
 }
