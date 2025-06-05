@@ -260,7 +260,7 @@ type TagClassLike interface {
 		bytes []byte,
 	) TagLike
 	TagWithSize(
-		size uti.Ordinal,
+		size uti.Cardinal,
 	) TagLike
 	TagFromSequence(
 		sequence col.Sequential[byte],
@@ -431,6 +431,7 @@ type TagLike interface {
 	// Principal Methods
 	GetClass() TagClassLike
 	GetIntrinsic() []byte
+	GetHash() uint64
 	AsString() string
 
 	// Aspect Interfaces

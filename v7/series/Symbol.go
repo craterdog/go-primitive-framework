@@ -13,7 +13,10 @@
 package series
 
 import (
+	fmt "fmt"
 	col "github.com/craterdog/go-collection-framework/v7"
+	uti "github.com/craterdog/go-missing-utilities/v7"
+	reg "regexp"
 )
 
 // CLASS INTERFACE
@@ -35,17 +38,22 @@ func (c *symbolClass_) Symbol(
 func (c *symbolClass_) SymbolFromSequence(
 	sequence col.Sequential[rune],
 ) SymbolLike {
-	var instance SymbolLike
-	// TBD - Add the constructor implementation.
-	return instance
+	var list = col.ListFromSequence[rune](sequence)
+	return symbol_(list.AsArray())
 }
 
 func (c *symbolClass_) SymbolFromString(
 	string_ string,
 ) SymbolLike {
-	var instance SymbolLike
-	// TBD - Add the constructor implementation.
-	return instance
+	var matches = c.matcher_.FindStringSubmatch(string_)
+	if uti.IsUndefined(matches) {
+		var message = fmt.Sprintf(
+			"An illegal string was passed to the symbol constructor method: %s",
+			string_,
+		)
+		panic(message)
+	}
+	return symbol_(matches[1]) // Strip off the leading "$".
 }
 
 // Constant Methods
@@ -56,9 +64,7 @@ func (c *symbolClass_) Concatenate(
 	first SymbolLike,
 	second SymbolLike,
 ) SymbolLike {
-	var result_ SymbolLike
-	// TBD - Add the function implementation.
-	return result_
+	return c.Symbol(first.GetIntrinsic() + second.GetIntrinsic())
 }
 
 // INSTANCE INTERFACE
@@ -74,16 +80,53 @@ func (v symbol_) GetIntrinsic() string {
 }
 
 func (v symbol_) AsString() string {
-	var result_ string
-	// TBD - Add the method implementation.
-	return result_
+	return "$" + v.GetIntrinsic()
 }
 
 // Attribute Methods
 
 // col.Sequential[rune] Methods
 
+func (v symbol_) IsEmpty() bool {
+	return len(v) == 0
+}
+
+func (v symbol_) GetSize() uti.Cardinal {
+	return uti.Cardinal(len(v.AsArray()))
+}
+
+func (v symbol_) AsArray() []rune {
+	return []rune(v)
+}
+
+func (v symbol_) GetIterator() col.IteratorLike[rune] {
+	var iteratorClass = col.IteratorClass[rune]()
+	var iterator = iteratorClass.Iterator(v.AsArray())
+	return iterator
+}
+
+// col.Accessible[rune] Methods
+
+func (v symbol_) GetValue(
+	index col.Index,
+) rune {
+	var list = col.ListFromArray[rune](v.AsArray())
+	return list.GetValue(index)
+}
+
+func (v symbol_) GetValues(
+	first col.Index,
+	last col.Index,
+) col.Sequential[rune] {
+	var list = col.ListFromArray[rune](v.AsArray())
+	return list.GetValues(first, last)
+}
+
 // PROTECTED INTERFACE
+
+func (v symbol_) String() string {
+	return v.AsString()
+}
 
 // Private Methods
 
@@ -95,6 +138,7 @@ type symbol_ string
 
 type symbolClass_ struct {
 	// Declare the class constants.
+	matcher_ *reg.Regexp
 }
 
 // Class Reference
@@ -105,4 +149,5 @@ func symbolClass() *symbolClass_ {
 
 var symbolClassReference_ = &symbolClass_{
 	// Initialize the class constants.
+	matcher_: reg.MustCompile("^(?:\\$(?:" + identifier_ + "))"),
 }

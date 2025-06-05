@@ -32,16 +32,14 @@ func QuoteClass() QuoteClassLike {
 func (c *quoteClass_) Quote(
 	string_ string,
 ) QuoteLike {
-	reg.MustCompile(string_)
 	return quote_(string_)
 }
 
 func (c *quoteClass_) QuoteFromSequence(
 	sequence col.Sequential[rune],
 ) QuoteLike {
-	var instance QuoteLike
-	// TBD - Add the constructor implementation.
-	return instance
+	var list = col.ListFromSequence[rune](sequence)
+	return quote_(list.AsArray())
 }
 
 func (c *quoteClass_) QuoteFromString(
@@ -55,26 +53,10 @@ func (c *quoteClass_) QuoteFromString(
 		)
 		panic(message)
 	}
-	switch matches[0] {
-	case "none":
-		return c.none_
-	case "any":
-		return c.any_
-	default:
-		reg.MustCompile(matches[1]) // Make sure it is a valid regular expression.
-		return quote_(matches[1]) // Strip off the double quotes and '?'.
-	}
+	return quote_(matches[1]) // Strip off the double quotes.
 }
 
 // Constant Methods
-
-func (c *quoteClass_) None() QuoteLike {
-	return c.none_
-}
-
-func (c *quoteClass_) Any() QuoteLike {
-	return c.any_
-}
 
 // Function Methods
 
@@ -98,34 +80,7 @@ func (v quote_) GetIntrinsic() string {
 }
 
 func (v quote_) AsString() string {
-	var string_ string
-	switch v {
-	case `^none$`:
-		string_ = `none`
-	case `.*`:
-		string_ = `any`
-	default:
-		string_ = `"` + string(v) + `"?`
-	}
-	return string_
-}
-
-func (v quote_) AsRegexp() *reg.Regexp {
-	return reg.MustCompile(string(v))
-}
-
-func (v quote_) MatchesText(
-	text string,
-) bool {
-	var matcher = reg.MustCompile(string(v))
-	return matcher.MatchString(text)
-}
-
-func (v quote_) GetMatches(
-	text string,
-) []string {
-	var matcher = reg.MustCompile(string(v))
-	return matcher.FindStringSubmatch(text)
+	return `"` + v.GetIntrinsic() + `"`
 }
 
 // Attribute Methods
@@ -137,7 +92,7 @@ func (v quote_) IsEmpty() bool {
 }
 
 func (v quote_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+	return uti.Cardinal(len(v.AsArray()))
 }
 
 func (v quote_) AsArray() []rune {
@@ -146,7 +101,7 @@ func (v quote_) AsArray() []rune {
 
 func (v quote_) GetIterator() col.IteratorLike[rune] {
 	var iteratorClass = col.IteratorClass[rune]()
-	var iterator = iteratorClass.Iterator([]rune(v))
+	var iterator = iteratorClass.Iterator(v.AsArray())
 	return iterator
 }
 
@@ -155,7 +110,7 @@ func (v quote_) GetIterator() col.IteratorLike[rune] {
 func (v quote_) GetValue(
 	index col.Index,
 ) rune {
-	var list = col.ListFromArray[rune]([]rune(v))
+	var list = col.ListFromArray[rune](v.AsArray())
 	return list.GetValue(index)
 }
 
@@ -163,7 +118,7 @@ func (v quote_) GetValues(
 	first col.Index,
 	last col.Index,
 ) col.Sequential[rune] {
-	var list = col.ListFromArray[rune]([]rune(v))
+	var list = col.ListFromArray[rune](v.AsArray())
 	return list.GetValues(first, last)
 }
 
@@ -197,8 +152,6 @@ type quote_ string
 
 type quoteClass_ struct {
 	// Declare the class constants.
-	none_    QuoteLike
-	any_     QuoteLike
 	matcher_ *reg.Regexp
 }
 
@@ -210,7 +163,5 @@ func quoteClass() *quoteClass_ {
 
 var quoteClassReference_ = &quoteClass_{
 	// Initialize the class constants.
-	none_:    quote_(`^none$`),
-	any_:     quote_(`.*`),
 	matcher_: reg.MustCompile("^(?:\"(?:" + character_ + ")*\")"),
 }

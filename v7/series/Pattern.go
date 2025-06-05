@@ -39,9 +39,8 @@ func (c *patternClass_) Pattern(
 func (c *patternClass_) PatternFromSequence(
 	sequence col.Sequential[rune],
 ) PatternLike {
-	var instance PatternLike
-	// TBD - Add the constructor implementation.
-	return instance
+	var list = col.ListFromSequence[rune](sequence)
+	return pattern_(list.AsArray())
 }
 
 func (c *patternClass_) PatternFromString(
@@ -105,26 +104,26 @@ func (v pattern_) AsString() string {
 	case `.*`:
 		string_ = `any`
 	default:
-		string_ = `"` + string(v) + `"?`
+		string_ = `"` + v.GetIntrinsic() + `"?`
 	}
 	return string_
 }
 
 func (v pattern_) AsRegexp() *reg.Regexp {
-	return reg.MustCompile(string(v))
+	return reg.MustCompile(v.GetIntrinsic())
 }
 
 func (v pattern_) MatchesText(
 	text string,
 ) bool {
-	var matcher = reg.MustCompile(string(v))
+	var matcher = reg.MustCompile(v.GetIntrinsic())
 	return matcher.MatchString(text)
 }
 
 func (v pattern_) GetMatches(
 	text string,
 ) []string {
-	var matcher = reg.MustCompile(string(v))
+	var matcher = reg.MustCompile(v.GetIntrinsic())
 	return matcher.FindStringSubmatch(text)
 }
 
@@ -137,7 +136,7 @@ func (v pattern_) IsEmpty() bool {
 }
 
 func (v pattern_) GetSize() uti.Cardinal {
-	return uti.Cardinal(len(v))
+	return uti.Cardinal(len(v.AsArray()))
 }
 
 func (v pattern_) AsArray() []rune {
@@ -146,7 +145,7 @@ func (v pattern_) AsArray() []rune {
 
 func (v pattern_) GetIterator() col.IteratorLike[rune] {
 	var iteratorClass = col.IteratorClass[rune]()
-	var iterator = iteratorClass.Iterator([]rune(v))
+	var iterator = iteratorClass.Iterator(v.AsArray())
 	return iterator
 }
 
@@ -155,7 +154,7 @@ func (v pattern_) GetIterator() col.IteratorLike[rune] {
 func (v pattern_) GetValue(
 	index col.Index,
 ) rune {
-	var list = col.ListFromArray[rune]([]rune(v))
+	var list = col.ListFromArray[rune](v.AsArray())
 	return list.GetValue(index)
 }
 
@@ -163,7 +162,7 @@ func (v pattern_) GetValues(
 	first col.Index,
 	last col.Index,
 ) col.Sequential[rune] {
-	var list = col.ListFromArray[rune]([]rune(v))
+	var list = col.ListFromArray[rune](v.AsArray())
 	return list.GetValues(first, last)
 }
 
@@ -183,7 +182,7 @@ func (v pattern_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	regex_     = "(?:\"((?:" + character_ + ")+)\"\\?)"
+	regex_ = "(?:\"((?:" + character_ + ")+)\"\\?)"
 )
 
 // Instance Structure

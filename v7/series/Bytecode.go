@@ -109,9 +109,10 @@ func (v bytecode_) AsString() string {
 	var size = len(v)
 	if size > 0 {
 		var index = 0
-		string_ += string(v[index])
+		var instruction = v[index]
+		string_ += fmt.Sprintf("%04x", instruction)
 		for index++; index < size; index++ {
-			string_ += " " + string(v[index])
+			string_ += " " + fmt.Sprintf("%04x", instruction)
 		}
 	}
 	string_ += "'"
