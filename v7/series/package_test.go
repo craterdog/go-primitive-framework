@@ -77,14 +77,6 @@ func TestBinaryLibrary(t *tes.T) {
 
 var BytecodeClass = ser.BytecodeClass()
 
-func TestEmptyBytecode(t *tes.T) {
-	var bytecode = `''`
-	var v = BytecodeClass.BytecodeFromString(bytecode)
-	ass.Equal(t, bytecode, v.AsString())
-	ass.True(t, v.IsEmpty())
-	ass.Equal(t, 0, int(v.GetSize()))
-}
-
 func TestBytecode(t *tes.T) {
 	var bytecode = `'abcd'`
 	var v = BytecodeClass.BytecodeFromString(bytecode)
@@ -120,4 +112,53 @@ func TestNamesLibrary(t *tes.T) {
 	var v1 = NameClass.NameFromString("/bali/types/abstractions")
 	var v2 = NameClass.NameFromString("/String")
 	ass.Equal(t, "/bali/types/abstractions/String", NameClass.Concatenate(v1, v2).AsString())
+}
+
+var NarrativeClass = ser.NarrativeClass()
+
+const n0 = `"><"`
+
+const n1 = `">
+    abcd本
+<"`
+
+const n2 = `">
+    1234
+<"`
+
+const n3 = `">
+    abcd本
+    1234
+<"`
+
+func TestEmptyNarrative(t *tes.T) {
+	var v0 = NarrativeClass.NarrativeFromString(n0)
+	ass.Equal(t, n0, v0.AsString())
+	ass.True(t, v0.IsEmpty())
+	ass.Equal(t, 0, int(v0.GetSize()))
+	ass.Equal(t, 0, len(v0.AsArray()))
+}
+
+func TestNarrative(t *tes.T) {
+	var v1 = NarrativeClass.NarrativeFromString(n1)
+	ass.Equal(t, n1, v1.AsString())
+	ass.False(t, v1.IsEmpty())
+	ass.Equal(t, 1, int(v1.GetSize()))
+
+	var v3 = NarrativeClass.NarrativeFromString(n3)
+	ass.Equal(t, n3, v3.AsString())
+	ass.False(t, v3.IsEmpty())
+	ass.Equal(t, 2, int(v3.GetSize()))
+
+	ass.Equal(t, n3, NarrativeClass.Narrative(v3.AsArray()).AsString())
+	ass.Equal(t, 2, len(v3.AsArray()))
+}
+
+func TestNarrativesLibrary(t *tes.T) {
+	var v1 = NarrativeClass.NarrativeFromString(n1)
+	var v2 = NarrativeClass.NarrativeFromString(n2)
+	var v3 = NarrativeClass.Concatenate(v1, v2)
+	ass.Equal(t, v1.GetValue(1), v3.GetValue(1))
+	ass.Equal(t, v2.GetValue(-1), v3.GetValue(-1))
+	ass.Equal(t, n3, v3.AsString())
 }

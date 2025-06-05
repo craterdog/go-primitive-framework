@@ -279,8 +279,6 @@ const (
 	alphanumeric_ = "(?:(?:" + alpha_ + ")|(?:" + base10_ + "))"
 	base10_       = "(?:[0-9])"
 	base64_       = "(?:(?:" + alphanumeric_ + ")|[\\+/])"
-	block_        = "(?: *(?:" + base64_ + "){1,60}" + eol_ + ")"
-	eol_          = "\\r?\\n"
 )
 
 // Instance Structure
@@ -302,5 +300,7 @@ func binaryClass() *binaryClass_ {
 
 var binaryClassReference_ = &binaryClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:'>(" + eol_ + "(?:" + block_ + ")+)? *<')"),
+	matcher_: reg.MustCompile(
+		"^(?:'>(((?:" + base64_ + ")|(?:" + space_ + ")|" + eol_ + ")*)<')",
+	),
 }

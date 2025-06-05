@@ -54,9 +54,15 @@ func (c *narrativeClass_) NarrativeFromString(
 		)
 		panic(message)
 	}
-	var narrative = matches[1]                   // Remove the delimiters.
-	var strings = sts.Split(narrative, "\n")[1:] // Extract the lines.
-	var lines = make([]Line, len(strings))
+	var narrative = matches[1]               // Remove the delimiters.
+	var strings = sts.Split(narrative, "\n") // Extract the lines.
+	strings = strings[1:]                    // Ignore the first empty line.
+	var size = len(strings)
+	if size > 0 {
+		size--
+		strings = strings[:size] // Ignore the last empty line.
+	}
+	var lines = make([]Line, size)
 	for index, line := range strings {
 		lines[index] = Line(line)
 	}
@@ -95,16 +101,14 @@ func (v narrative_) GetIntrinsic() []Line {
 }
 
 func (v narrative_) AsString() string {
-	var string_ = "\">\n"
-	var size = len(v)
-	if size > 0 {
-		var index = 0
-		string_ += "    " + string(v[index])
-		for index++; index < size; index++ {
-			string_ += "\n    " + string(v[index])
+	var string_ = "\">"
+	if len(v) > 0 {
+		for _, line := range v {
+			string_ += "\n" + string(line)
 		}
+		string_ += "\n"
 	}
-	string_ += "\n<\""
+	string_ += "<\""
 	return string_
 }
 
@@ -164,7 +168,8 @@ func (v narrative_) String() string {
 // each narrative to lessen the chance of a narrative collision with other private Go
 // class constants in this package.
 const (
-	line_ = "(?:(?:" + letter_ + ")((?:" + letter_ + ")|" + digit_ + ")*)"
+	any_ = "." // This does NOT include newline characters.
+	eol_ = "\\r?\\n"
 )
 
 // Instance Structure
@@ -187,6 +192,6 @@ func narrativeClass() *narrativeClass_ {
 var narrativeClassReference_ = &narrativeClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"(?:(/(?:" + line_ + "))+)",
+		"^(?:\">((" + any_ + "|" + eol_ + ")*?)<\")",
 	),
 }

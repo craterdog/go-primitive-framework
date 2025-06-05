@@ -178,6 +178,7 @@ func (v bytecode_) String() string {
 const (
 	base16_      = "(?:(?:" + base10_ + ")|[a-f])"
 	instruction_ = "(?:(?:" + base16_ + "){4})"
+	space_       = "(?: )"
 )
 
 // Instance Structure
@@ -200,6 +201,7 @@ func bytecodeClass() *bytecodeClass_ {
 var bytecodeClassReference_ = &bytecodeClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:'((?:" + instruction_ + ")( (?:" + instruction_ + "))*)?')",
+		"^(?:'((?:" + instruction_ + ")((?:" + space_ + ")(?:" +
+			instruction_ + "))*)')",
 	),
 }
