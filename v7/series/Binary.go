@@ -202,8 +202,9 @@ func (v binary_) GetIntrinsic() []byte {
 func (v binary_) AsString() string {
 	var encoded = uti.Base64Encode(v)
 	var length = len(encoded)
-	var string_ = "'>\n"
+	var string_ = "'>"
 	if length > 0 {
+		string_ += "\n"
 		var width = 60
 		var indentation = "    "
 		var index int
@@ -211,6 +212,8 @@ func (v binary_) AsString() string {
 			string_ += indentation + encoded[index:index+width] + "\n"
 		}
 		string_ += indentation + encoded[index:] + "\n"
+	} else {
+		string_ += " "
 	}
 	string_ += "<'"
 	return string_
@@ -299,7 +302,5 @@ func binaryClass() *binaryClass_ {
 
 var binaryClassReference_ = &binaryClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile(
-		"^(?:'>(" + eol_ + "(?:" + block_ + ")+)? *<')",
-	),
+	matcher_: reg.MustCompile("^(?:'>(" + eol_ + "(?:" + block_ + ")+)? *<')"),
 }

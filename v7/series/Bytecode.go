@@ -64,11 +64,11 @@ func (c *bytecodeClass_) BytecodeFromString(
 	)
 	var index int
 	for index < len(bytes)-1 {
-		var firstByte = Instruction(bytes[index])
+		var firstByte = Instruction(bytes[index]) << 8
 		index++
-		var secondByte = Instruction(bytes[index]) << 8
+		var secondByte = Instruction(bytes[index])
 		index++
-		instructions[index/2] = firstByte & secondByte
+		instructions[index/2-1] = firstByte | secondByte
 	}
 	return bytecode_(instructions)
 }
@@ -112,6 +112,7 @@ func (v bytecode_) AsString() string {
 		var instruction = v[index]
 		string_ += fmt.Sprintf("%04x", instruction)
 		for index++; index < size; index++ {
+			instruction = v[index]
 			string_ += " " + fmt.Sprintf("%04x", instruction)
 		}
 	}

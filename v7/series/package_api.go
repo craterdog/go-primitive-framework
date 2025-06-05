@@ -322,6 +322,7 @@ type BinaryLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[byte]
 	col.Sequential[byte]
 }
 
@@ -337,6 +338,7 @@ type BytecodeLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[Instruction]
 	col.Sequential[Instruction]
 }
 
@@ -352,6 +354,7 @@ type NameLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[Identifier]
 	col.Sequential[Identifier]
 }
 
@@ -367,6 +370,7 @@ type NarrativeLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[Line]
 	col.Sequential[Line]
 }
 
@@ -389,6 +393,7 @@ type PatternLike interface {
 	) []string
 
 	// Aspect Interfaces
+	col.Accessible[rune]
 	col.Sequential[rune]
 }
 
@@ -404,6 +409,7 @@ type QuoteLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[rune]
 	col.Sequential[rune]
 }
 
@@ -419,6 +425,7 @@ type SymbolLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[rune]
 	col.Sequential[rune]
 }
 
@@ -435,6 +442,7 @@ type TagLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[byte]
 	col.Sequential[byte]
 }
 
@@ -450,6 +458,7 @@ type VersionLike interface {
 	AsString() string
 
 	// Aspect Interfaces
+	col.Accessible[uti.Ordinal]
 	col.Sequential[uti.Ordinal]
 }
 
