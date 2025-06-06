@@ -185,6 +185,6 @@ func nameClass() *nameClass_ {
 var nameClassReference_ = &nameClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"(?:(?:/" + identifier_ + ")+)",
+		"^(?:(?:/" + identifier_ + ")+)",
 	),
 }

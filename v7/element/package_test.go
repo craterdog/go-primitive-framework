@@ -197,6 +197,13 @@ func TestZeroDurations(t *tes.T) {
 	ass.Equal(t, 0, v.GetYears())
 }
 
+func TestStringDurations(t *tes.T) {
+	var duration = DurationClass.DurationFromString("~-P1Y2M3DT4H5M6S")
+	ass.Equal(t, "~-P1Y2M3DT4H5M6S", duration.AsString())
+	duration = DurationClass.DurationFromString("~P0W")
+	ass.Equal(t, "~P0W", duration.AsString())
+}
+
 func TestPositiveDurations(t *tes.T) {
 	var v = DurationClass.Duration(60000)
 	ass.Equal(t, 60000, v.AsInteger())
@@ -244,29 +251,32 @@ func TestNegativeDurations(t *tes.T) {
 var GlyphClass = ele.GlyphClass()
 
 func TestGlyphs(t *tes.T) {
-	var v = GlyphClass.Glyph('a')
-	ass.Equal(t, `"a"`, v.AsString())
+	var v = GlyphClass.GlyphFromString("'''")
+	ass.Equal(t, "'''", v.AsString())
+
+	v = GlyphClass.Glyph('a')
+	ass.Equal(t, "'a'", v.AsString())
 
 	v = GlyphClass.Glyph('"')
-	ass.Equal(t, `"\""`, v.AsString())
+	ass.Equal(t, `'"'`, v.AsString())
 
 	v = GlyphClass.Glyph('😊')
-	ass.Equal(t, `"😊"`, v.AsString())
+	ass.Equal(t, "'😊'", v.AsString())
 
 	v = GlyphClass.Glyph('界')
-	ass.Equal(t, `"界"`, v.AsString())
+	ass.Equal(t, "'界'", v.AsString())
 
 	v = GlyphClass.Glyph('\'')
-	ass.Equal(t, `"'"`, v.AsString())
+	ass.Equal(t, "'''", v.AsString())
 
 	v = GlyphClass.Glyph('\\')
-	ass.Equal(t, `"\\"`, v.AsString())
+	ass.Equal(t, "'\\'", v.AsString())
 
 	v = GlyphClass.Glyph('\n')
-	ass.Equal(t, `"\n"`, v.AsString())
+	ass.Equal(t, "'\n'", v.AsString())
 
 	v = GlyphClass.Glyph('\t')
-	ass.Equal(t, `"\t"`, v.AsString())
+	ass.Equal(t, "'\t'", v.AsString())
 }
 
 var MomentClass = ele.MomentClass()

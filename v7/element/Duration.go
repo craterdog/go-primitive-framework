@@ -358,37 +358,47 @@ func (v duration_) String() string {
 // Private Methods
 
 func (c *durationClass_) durationFromMatches(matches []string) int {
-	var milliseconds = 0.0
 	var sign = 1.0
-	var isTime = false
-	for _, match := range matches[1:] {
-		if match != "" {
-			var stype = match[len(match)-1:] // Strip off the time span.
-			var tspan = match[:len(match)-1] // Strip off the span type.
-			var float, _ = stc.ParseFloat(tspan, 64)
-			switch stype {
-			case "-":
-				sign = -1.0
-			case "W":
-				milliseconds += float * float64(durationClass().millisecondsPerWeek_)
-			case "Y":
-				milliseconds += float * float64(durationClass().millisecondsPerYear_)
-			case "M":
-				if isTime {
-					milliseconds += float * float64(durationClass().millisecondsPerMinute_)
-				} else {
-					milliseconds += float * float64(durationClass().millisecondsPerMonth_)
-				}
-			case "D":
-				milliseconds += float * float64(durationClass().millisecondsPerDay_)
-			case "T":
-				isTime = true
-			case "H":
-				milliseconds += float * float64(durationClass().millisecondsPerHour_)
-			case "S":
-				milliseconds += float * float64(durationClass().millisecondsPerSecond_)
-			}
-		}
+	var milliseconds = 0.0
+	if matches[1] == "-" {
+		// The duration is negative.
+		sign = -sign
+	}
+	if len(matches[2]) > 0 {
+		// The duration is in weeks.
+		var float, _ = stc.ParseFloat(matches[2], 64)
+		milliseconds += float * float64(c.millisecondsPerWeek_)
+		return int(sign * milliseconds)
+	}
+	if len(matches[3]) > 0 {
+		// The duration has a years component.
+		var float, _ = stc.ParseFloat(matches[3], 64)
+		milliseconds += float * float64(c.millisecondsPerYear_)
+	}
+	if len(matches[4]) > 0 {
+		// The duration has a months component.
+		var float, _ = stc.ParseFloat(matches[4], 64)
+		milliseconds += float * float64(c.millisecondsPerMonth_)
+	}
+	if len(matches[5]) > 0 {
+		// The duration has a days component.
+		var float, _ = stc.ParseFloat(matches[5], 64)
+		milliseconds += float * float64(c.millisecondsPerDay_)
+	}
+	if len(matches[6]) > 0 {
+		// The duration has an hours component.
+		var float, _ = stc.ParseFloat(matches[6], 64)
+		milliseconds += float * float64(c.millisecondsPerHour_)
+	}
+	if len(matches[7]) > 0 {
+		// The duration has a minutes component.
+		var float, _ = stc.ParseFloat(matches[7], 64)
+		milliseconds += float * float64(c.millisecondsPerMinute_)
+	}
+	if len(matches[8]) > 0 {
+		// The duration has a seconds component.
+		var float, _ = stc.ParseFloat(matches[8], 64)
+		milliseconds += float * float64(c.millisecondsPerSecond_)
 	}
 	return int(sign * milliseconds)
 }
@@ -408,14 +418,14 @@ func (c *durationClass_) magnitude(value int) int {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	days_     = "(?:(?:" + timespan_ + ")D)"
-	hours_    = "(?:(?:" + timespan_ + ")H)"
-	minutes_  = "(?:(?:" + timespan_ + ")M)"
-	months_   = "(?:(?:" + timespan_ + ")M)"
-	seconds_  = "(?:(?:" + timespan_ + ")S)"
-	timespan_ = "(?:0|((?:" + ordinal_ + ")(?:" + fraction_ + ")?))"
-	weeks_    = "(?:(?:" + timespan_ + ")W)"
-	years_    = "(?:(?:" + timespan_ + ")Y)"
+	days_     = "(" + timespan_ + ")D"
+	hours_    = "(" + timespan_ + ")H"
+	minutes_  = "(" + timespan_ + ")M"
+	months_   = "(" + timespan_ + ")M"
+	seconds_  = "(" + timespan_ + ")S"
+	timespan_ = "0|" + ordinal_ + "(?:" + fraction_ + ")?"
+	weeks_    = "(" + timespan_ + ")W"
+	years_    = "(" + timespan_ + ")Y"
 )
 
 // Instance Structure
@@ -450,9 +460,9 @@ func durationClass() *durationClass_ {
 var durationClassReference_ = &durationClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:~(?:" + sign_ + ")?P((?:" + weeks_ + ")|((?:" + years_ + ")?(?:" +
-			months_ + ")?(?:" + days_ + ")?(T(?:" + hours_ + ")?(?:" + minutes_ +
-			")?(?:" + seconds_ + ")?)?)))",
+		"^~(" + sign_ + ")?P(?:(?:" + weeks_ + ")|(?:(?:" + years_ + ")?(?:" +
+			months_ + ")?(?:" + days_ + ")?(?:T(?:" + hours_ + ")?(?:" + minutes_ +
+			")?(?:" + seconds_ + ")?)?))",
 	),
 	minimum_: duration_(0),
 	maximum_: duration_(mat.MaxInt),

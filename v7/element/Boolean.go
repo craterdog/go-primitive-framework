@@ -175,7 +175,7 @@ func booleanClass() *booleanClass_ {
 
 var booleanClassReference_ = &booleanClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:false|true)"),
+	matcher_: reg.MustCompile("^false|true"),
 	minimum_: boolean_(false),
 	maximum_: boolean_(true),
 	false_:   boolean_(false),

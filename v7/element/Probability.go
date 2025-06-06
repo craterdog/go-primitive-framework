@@ -63,6 +63,7 @@ func (c *probabilityClass_) ProbabilityFromString(
 	string_ string,
 ) ProbabilityLike {
 	var matches = c.matcher_.FindStringSubmatch(string_)
+	fmt.Printf("Probability: %q\n", matches)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the probability constructor method: %s",

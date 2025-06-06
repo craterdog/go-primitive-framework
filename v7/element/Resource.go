@@ -128,13 +128,13 @@ func (v resource_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	scheme_       = "(?:(?:" + alpha_ + ")((?:" + alphanumeric_ + ")|\\+|-|\\.)*)"
-	authority_    = "(?:[^/" + control_ + "]+)"
-	path_         = "(?:[^\\?#>" + control_ + "]*)"
-	query_        = "(?:[^#>" + control_ + "]*)"
-	fragment_     = "(?:[^>" + control_ + "]*)"
-	alpha_        = "(?:[A-Za-z])"
-	alphanumeric_ = "(?:(?:" + alpha_ + ")|(?:" + base10_ + "))"
+	scheme_       = "(?:" + alpha_ + ")(?:" + alphanumeric_ + "|\\+|-|\\.)*"
+	authority_    = "[^/" + control_ + "]+"
+	path_         = "[^\\?#>" + control_ + "]*"
+	query_        = "[^#>" + control_ + "]*"
+	fragment_     = "[^>" + control_ + "]*"
+	alpha_        = "[A-Za-z]"
+	alphanumeric_ = alpha_ + "|" + base10_
 )
 
 // Instance Structure
@@ -157,7 +157,7 @@ func resourceClass() *resourceClass_ {
 var resourceClassReference_ = &resourceClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:<((" + scheme_ + "):(//(" + authority_ + "))?(" + path_ +
-			")(\\?(" + query_ + "))?(?:#(" + fragment_ + "))?)>)",
+		"^<((" + scheme_ + "):(?://(" + authority_ + "))?(" + path_ +
+			")(?:\\?(" + query_ + "))?(?:#(" + fragment_ + "))?)>",
 	),
 }

@@ -398,7 +398,7 @@ func angleClass() *angleClass_ {
 
 var angleClassReference_ = &angleClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:~(0|(?:" + amplitude_ + ")))"),
+	matcher_: reg.MustCompile("^~(0|" + amplitude_ + ")"),
 	zero_:    angle_(0.0),
 	pi_:      angle_(mat.Pi),
 	tau_:     angle_(2.0 * mat.Pi),

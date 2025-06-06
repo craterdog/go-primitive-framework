@@ -242,6 +242,6 @@ func versionClass() *versionClass_ {
 var versionClassReference_ = &versionClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"(?:v((?:" + ordinal_ + ")(?:\\.(?:" + ordinal_ + "))*))",
+		"^(?:v((?:" + ordinal_ + ")(?:\\.(?:" + ordinal_ + "))*))",
 	),
 }

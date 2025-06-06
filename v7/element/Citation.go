@@ -14,6 +14,7 @@ package element
 
 import (
 	fmt "fmt"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	sts "strings"
 )
@@ -31,7 +32,8 @@ func CitationClass() CitationClassLike {
 func (c *citationClass_) Citation(
 	string_ string,
 ) CitationLike {
-	if !c.matcher_.MatchString(string_) {
+	var matches = c.matcher_.FindStringSubmatch(string_)
+	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the citation constructor method: %s",
 			string_,
@@ -96,12 +98,12 @@ func (v citation_) String() string {
 // class constants in this package.
 const (
 	digit_      = "\\p{Nd}"
-	identifier_ = "(?:(?:" + letter_ + ")((?:" + letter_ + ")|" + digit_ + ")*)"
-	letter_     = "(?:" + lower_ + "|" + upper_ + ")"
+	identifier_ = "(?:" + letter_ + ")(?:" + letter_ + "|" + digit_ + ")*"
+	letter_     = lower_ + "|" + upper_
 	lower_      = "\\p{Ll}"
-	name_       = "(?:(/(?:" + identifier_ + "))+)"
+	name_       = "(?:/" + identifier_ + ")+"
 	upper_      = "\\p{Lu}"
-	version_    = "(?:v(?:" + ordinal_ + ")(\\.(?:" + ordinal_ + "))*)"
+	version_    = "v" + ordinal_ + "(?:\\." + ordinal_ + ")*"
 )
 
 // Instance Structure
@@ -123,5 +125,5 @@ func citationClass() *citationClass_ {
 
 var citationClassReference_ = &citationClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:(?:" + name_ + ")@(?:" + version_ + "))"),
+	matcher_: reg.MustCompile("^(" + name_ + ")@(" + version_ + ")"),
 }

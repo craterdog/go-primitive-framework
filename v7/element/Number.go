@@ -19,7 +19,7 @@ import (
 	cmp "math/cmplx"
 	reg "regexp"
 	stc "strconv"
-	sts "strings"
+	//sts "strings"
 )
 
 // CLASS INTERFACE
@@ -457,55 +457,24 @@ func (c *numberClass_) complexFromMatches(matches []string) complex128 {
 	switch {
 	case len(matches[1]) > 0:
 		// This is a complex number in polar form.
-		var magnitude = c.floatFromString(matches[1])
-		var phase = c.floatFromString(matches[5])
+		var magnitude = c.floatFromString(matches[2])
+		var phase = c.floatFromString(matches[3])
 		complex_ = cmp.Rect(magnitude, phase)
-	case len(matches[8]) > 0:
+	case len(matches[4]) > 0:
 		// This is a complex number in rectangular form.
-		var realPart = c.floatFromString(matches[8])
-		if matches[7] == "-" {
-			realPart = -realPart
-		}
-		var imaginaryPart = c.floatFromString(matches[11])
-		if matches[10] == "-" {
-			imaginaryPart = -imaginaryPart
-		}
+		var realPart = c.floatFromString(matches[5])
+		var imaginaryPart = c.floatFromString(matches[6])
 		complex_ = complex(realPart, imaginaryPart)
-	default:
-		// This is a pure (non-complex) number.
-		switch matches[0] {
-		case "undefined":
-			complex_ = cmp.NaN()
-		case "infinity", "∞":
-			complex_ = cmp.Inf()
-		case "0":
-			complex_ = complex(0, 0)
-		case "+i", "i":
-			complex_ = complex(0, 1)
-		case "-i":
-			complex_ = complex(0, -1)
-		case "+e", "e", "-e", "+phi", "phi", "-phi",
-			"+pi", "pi", "-pi", "+tau", "tau", "-tau":
-			// We must handle the constants that end in "i" separately.
-			complex_ = complex(
-				c.floatFromString(matches[14]),
-				0,
-			)
-		default:
-			if sts.HasSuffix(matches[0], "i") {
-				// This is a pure imaginary number.
-				complex_ = complex(
-					0,
-					c.floatFromString(matches[0][:len(matches[0])-1]),
-				)
-			} else {
-				// This is a pure real number.
-				complex_ = complex(
-					c.floatFromString(matches[0]),
-					0,
-				)
-			}
-		}
+	case len(matches[8]) > 0:
+		// This is a pure real number.
+		var realPart = c.floatFromString(matches[8])
+		var imaginaryPart = 0.0
+		complex_ = complex(realPart, imaginaryPart)
+	case len(matches[7]) > 0:
+		// This is a pure imaginary number.
+		var realPart = 0.0
+		var imaginaryPart = c.floatFromString(matches[7])
+		complex_ = complex(realPart, imaginaryPart)
 	}
 	return complex_
 }
@@ -657,21 +626,21 @@ func (c *numberClass_) stringFromImaginary(imaginary float64) string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	amplitude_ = "(?:(0(?:" + fraction_ + ")|(?:" + ordinal_ + ")(?:" +
-		fraction_ + ")?|(?:" + transcendental_ + "))(?:" + exponent_ + ")?)"
-	base10_         = "(?:[0-9])"
-	exponent_       = "(?:E(?:" + sign_ + ")?(?:" + ordinal_ + "))"
-	float_          = "(?:(?:" + sign_ + ")?(?:" + amplitude_ + "))"
-	fraction_       = "(?:\\.(?:" + base10_ + ")+)"
-	imaginary_      = "(?:(?:" + float_ + ")i)"
-	infinity_       = "(?:(?:" + sign_ + ")?(infinity|∞))"
-	ordinal_        = "(?:[1-9](?:" + base10_ + ")*)"
-	polar_          = "(?:(?:" + amplitude_ + ")e\\^(~(0|(?:" + amplitude_ + ")))?i)"
-	real_           = "(?:(?:" + float_ + ")|0|(?:" + infinity_ + ")|(?:" + undefined_ + "))"
-	rectangular_    = "(?:(?:" + sign_ + ")?(?:" + amplitude_ + ")(?:" + sign_ + ")(?:" + amplitude_ + ")i)"
-	sign_           = "(?:(\\+|-))"
-	transcendental_ = "(?:e|pi|π|tau|τ|phi|φ)"
-	undefined_      = "(?:undefined)"
+	amplitude_ = "(?:0(?:" + fraction_ + ")|(?:" + ordinal_ + ")(?:" +
+		fraction_ + ")?|(?:" + transcendental_ + "))(?:" + exponent_ + ")?"
+	base10_         = "[0-9]"
+	exponent_       = "E(?:" + sign_ + ")?(?:" + ordinal_ + ")"
+	float_          = "(?:" + sign_ + ")?(?:" + amplitude_ + ")"
+	fraction_       = "\\.(?:" + base10_ + ")+"
+	imaginary_      = "(?:" + float_ + ")i"
+	infinity_       = "(?:" + sign_ + ")?(?:infinity|∞)"
+	ordinal_        = "[1-9](?:" + base10_ + ")*"
+	polar_          = "(" + amplitude_ + ")e\\^(?:~(0|(?:" + amplitude_ + ")))?i"
+	real_           = "(?:" + float_ + ")|0|(?:" + infinity_ + ")|(?:" + undefined_ + ")"
+	rectangular_    = "((?:" + sign_ + ")?(?:" + amplitude_ + "))((?:" + sign_ + ")(?:" + amplitude_ + "))i"
+	sign_           = "\\+|-"
+	transcendental_ = "e|pi|π|tau|τ|phi|φ"
+	undefined_      = "undefined"
 )
 
 // Instance Structure
@@ -705,8 +674,8 @@ func numberClass() *numberClass_ {
 var numberClassReference_ = &numberClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:(?:" + polar_ + ")|(?:" + rectangular_ + ")|(?:" + imaginary_ +
-			")|(?:" + real_ + "))",
+		"^(" + polar_ + ")|(" + rectangular_ + ")|(" + float_ +
+			")i|(" + real_ + ")",
 	),
 	maximum_:   number_(complex(mat.Inf(0), mat.Inf(0))),
 	minimum_:   number_(0),

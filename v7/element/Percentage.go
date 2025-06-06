@@ -54,10 +54,7 @@ func (c *percentageClass_) PercentageFromString(
 		)
 		panic(message)
 	}
-	var float, _ = stc.ParseFloat(matches[2], 64) // Strip off the '%' suffix.
-	if matches[1] == "-" {
-		float = -float
-	}
+	var float, _ = stc.ParseFloat(matches[1], 64) // Strip off the '%' suffix.
 	return percentage_(float / 100.0)
 }
 
@@ -150,5 +147,5 @@ func percentageClass() *percentageClass_ {
 
 var percentageClassReference_ = &percentageClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:(?:" + real_ + ")%)"),
+	matcher_: reg.MustCompile("^(" + real_ + ")%"),
 }

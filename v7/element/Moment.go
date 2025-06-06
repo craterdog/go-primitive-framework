@@ -42,6 +42,7 @@ func (c *momentClass_) MomentFromString(
 	string_ string,
 ) MomentLike {
 	var matches = c.matcher_.FindStringSubmatch(string_)
+	fmt.Printf("Moment: %q\n", matches)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the moment constructor method: %s",
