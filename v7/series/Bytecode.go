@@ -201,7 +201,7 @@ func bytecodeClass() *bytecodeClass_ {
 var bytecodeClassReference_ = &bytecodeClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:'((?:" + instruction_ + ")((?:" + space_ + ")(?:" +
+		"^(?:'((?:" + instruction_ + ")(?:(?:" + space_ + ")(?:" +
 			instruction_ + "))*)')",
 	),
 }

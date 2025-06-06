@@ -301,6 +301,6 @@ func binaryClass() *binaryClass_ {
 var binaryClassReference_ = &binaryClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:'>(((?:" + base64_ + ")|(?:" + space_ + ")|" + eol_ + ")*)<')",
+		"^(?:'>((?:(?:" + base64_ + ")|(?:" + space_ + ")|" + eol_ + ")*)<')",
 	),
 }

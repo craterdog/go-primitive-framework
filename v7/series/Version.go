@@ -55,7 +55,7 @@ func (c *versionClass_) VersionFromString(
 		)
 		panic(message)
 	}
-	var match = matches[1] // Remove the leading "v".
+	var match = matches[1] // Strip off the leading "v".
 	var levels = sts.Split(match, ".")
 	var ordinals = make([]uti.Ordinal, len(levels))
 	for index, level := range levels {

@@ -139,8 +139,8 @@ func (v quote_) String() string {
 // class constants in this package.
 const (
 	character_ = "(?:(?:" + escape_ + ")|\\\\\"|[^\"" + control_ + "])"
-	escape_    = "(?:\\\\((?:" + unicode_ + ")|[abfnrtv\\\\]))"
-	unicode_   = "(?:(u(?:" + base16_ + "){4})|(U(?:" + base16_ + "){8}))"
+	escape_    = "(?:\\\\(?:(?:" + unicode_ + ")|[abfnrtv\\\\]))"
+	unicode_   = "(?:(?:u(?:" + base16_ + "){4})|(?:U(?:" + base16_ + "){8}))"
 	control_   = "\\p{Cc}"
 )
 

@@ -54,7 +54,7 @@ func (c *narrativeClass_) NarrativeFromString(
 		)
 		panic(message)
 	}
-	var narrative = matches[1]               // Remove the delimiters.
+	var narrative = matches[1]               // Strip off the delimiters.
 	var strings = sts.Split(narrative, "\n") // Extract the lines.
 	strings = strings[1:]                    // Ignore the first empty line.
 	var size = len(strings)
@@ -192,6 +192,6 @@ func narrativeClass() *narrativeClass_ {
 var narrativeClassReference_ = &narrativeClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:\">((" + any_ + "|" + eol_ + ")*?)<\")",
+		"^(?:\">((?:" + any_ + "|" + eol_ + ")*?)<\")",
 	),
 }

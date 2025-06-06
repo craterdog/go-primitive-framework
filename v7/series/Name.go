@@ -158,7 +158,7 @@ func (v name_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	identifier_ = "(?:(?:" + letter_ + ")((?:" + letter_ + ")|" + digit_ + ")*)"
+	identifier_ = "(?:(?:" + letter_ + ")(?:(?:" + letter_ + ")|" + digit_ + ")*)"
 	letter_     = "(?:" + lower_ + "|" + upper_ + ")"
 	digit_      = "\\p{Nd}"
 	lower_      = "\\p{Ll}"
@@ -185,6 +185,6 @@ func nameClass() *nameClass_ {
 var nameClassReference_ = &nameClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"(?:(/(?:" + identifier_ + "))+)",
+		"(?:(?:/" + identifier_ + ")+)",
 	),
 }

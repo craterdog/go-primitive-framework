@@ -182,7 +182,7 @@ func (v pattern_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	regex_ = "(?:\"((?:" + character_ + ")+)\"\\?)"
+	regex_ = "(?:\"((?:" + character_ + ")+)\"\\\\?)"
 )
 
 // Instance Structure
@@ -208,5 +208,5 @@ var patternClassReference_ = &patternClass_{
 	// Initialize the class constants.
 	none_:    pattern_(`^none$`),
 	any_:     pattern_(`.*`),
-	matcher_: reg.MustCompile("^(?:none|(?:" + regex_ + ")|any)"),
+	matcher_: reg.MustCompile("^(?:" + regex_ + ")|any|none"),
 }
