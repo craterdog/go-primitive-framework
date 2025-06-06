@@ -613,18 +613,18 @@ func (c *numberClass_) stringFromFloat(float float64) string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	amplitude_ = "(?:0(?:" + fraction_ + ")|(?:" + ordinal_ + ")(?:" +
-		fraction_ + ")?|(?:" + transcendental_ + "))(?:" + exponent_ + ")?"
+	amplitude_ = "(?:0" + fraction_ + "|" + ordinal_ + "(?:" + fraction_ +
+		")?|" + transcendental_ + "(?:" + exponent_ + ")?)"
 	base10_         = "[0-9]"
-	exponent_       = "E(?:" + sign_ + ")?(?:" + ordinal_ + ")"
-	float_          = "(?:" + sign_ + ")?(?:" + amplitude_ + ")"
+	exponent_       = "E(?:" + sign_ + ")?" + ordinal_
+	float_          = "(?:" + sign_ + ")?" + amplitude_
 	fraction_       = "\\.(?:" + base10_ + ")+"
 	imaginary_      = "(?:" + float_ + ")i"
 	infinity_       = "(?:" + sign_ + ")?(?:infinity|∞)"
 	ordinal_        = "[1-9](?:" + base10_ + ")*"
-	polar_          = "(" + amplitude_ + ")e\\^(?:~(0|(?:" + amplitude_ + ")))?i"
-	real_           = "(?:" + float_ + ")|0|(?:" + infinity_ + ")|(?:" + undefined_ + ")"
-	rectangular_    = "((?:" + sign_ + ")?(?:" + amplitude_ + "))((?:" + sign_ + ")(?:" + amplitude_ + "))i"
+	polar_          = "(" + amplitude_ + ")e\\^(?:~(0|" + amplitude_ + "))?i"
+	real_           = float_ + "|0|" + infinity_ + "|" + undefined_
+	rectangular_    = "((?:" + sign_ + ")?" + amplitude_ + ")((?:" + sign_ + ")" + amplitude_ + ")i"
 	sign_           = "\\+|-"
 	transcendental_ = "e|pi|π|tau|τ|phi|φ"
 	undefined_      = "undefined"
