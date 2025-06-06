@@ -149,5 +149,5 @@ func symbolClass() *symbolClass_ {
 
 var symbolClassReference_ = &symbolClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:\\$(?:" + identifier_ + "))"),
+	matcher_: reg.MustCompile("^(?:\\$(" + identifier_ + "))"),
 }

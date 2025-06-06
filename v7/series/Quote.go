@@ -163,5 +163,5 @@ func quoteClass() *quoteClass_ {
 
 var quoteClassReference_ = &quoteClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:\"(?:" + character_ + ")*\")"),
+	matcher_: reg.MustCompile("^(?:\"((?:" + character_ + ")*)\")"),
 }

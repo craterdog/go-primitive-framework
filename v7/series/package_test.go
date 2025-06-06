@@ -13,8 +13,10 @@
 package series_test
 
 import (
+	uti "github.com/craterdog/go-missing-utilities/v7"
 	ser "github.com/craterdog/go-primitive-framework/v7/series"
 	ass "github.com/stretchr/testify/assert"
+	mat "math"
 	tes "testing"
 )
 
@@ -161,4 +163,170 @@ func TestNarrativesLibrary(t *tes.T) {
 	ass.Equal(t, v1.GetValue(1), v3.GetValue(1))
 	ass.Equal(t, v2.GetValue(-1), v3.GetValue(-1))
 	ass.Equal(t, n3, v3.AsString())
+}
+
+var PatternClass = ser.PatternClass()
+
+func TestNonePattern(t *tes.T) {
+	var v = PatternClass.PatternFromString(`none`)
+	ass.Equal(t, `none`, v.AsString())
+
+	var text = ""
+	ass.False(t, v.MatchesText(text))
+	ass.Equal(t, []string(nil), v.GetMatches(text))
+
+	text = "anything at all..."
+	ass.False(t, v.MatchesText(text))
+	ass.Equal(t, []string(nil), v.GetMatches(text))
+
+	text = "none"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+}
+
+func TestAnyPattern(t *tes.T) {
+	var v = PatternClass.PatternFromString(`any`)
+	ass.Equal(t, `any`, v.AsString())
+
+	var text = ""
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+
+	text = "anything at all..."
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+
+	text = "none"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text}, v.GetMatches(text))
+}
+
+func TestSomePattern(t *tes.T) {
+	var v = PatternClass.PatternFromString(`"c(.+t)"?`)
+	ass.Equal(t, `"c(.+t)"?`, v.AsString())
+
+	var text = "ct"
+	ass.False(t, v.MatchesText(text))
+	ass.Equal(t, []string(nil), v.GetMatches(text))
+
+	text = "cat"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
+
+	text = "caaat"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
+
+	text = "cot"
+	ass.True(t, v.MatchesText(text))
+	ass.Equal(t, []string{text, text[1:]}, v.GetMatches(text))
+}
+
+var QuoteClass = ser.QuoteClass()
+
+func TestEmptyQuote(t *tes.T) {
+	var v = QuoteClass.Quote("")
+	ass.Equal(t, "", v.GetIntrinsic())
+	ass.True(t, v.IsEmpty())
+	ass.Equal(t, 0, int(v.GetSize()))
+}
+
+func TestQuote(t *tes.T) {
+	var v = QuoteClass.QuoteFromString(`"abcd本1234"`)
+	ass.Equal(t, `"abcd本1234"`, v.AsString())
+	ass.False(t, v.IsEmpty())
+	ass.Equal(t, 9, int(v.GetSize()))
+	ass.Equal(t, 'a', v.GetValue(1))
+	ass.Equal(t, '4', v.GetValue(-1))
+	ass.Equal(t, `"d本1"`, QuoteClass.QuoteFromSequence(v.GetValues(4, 6)).AsString())
+}
+
+func TestQuotesLibrary(t *tes.T) {
+	var v1 = QuoteClass.Quote("abcd本")
+	var v2 = QuoteClass.Quote("1234")
+	ass.Equal(t, `"abcd本1234"`, QuoteClass.Concatenate(v1, v2).AsString())
+}
+
+var SymbolClass = ser.SymbolClass()
+
+func TestSymbol(t *tes.T) {
+	var foobar = "$foobar"
+	var v = SymbolClass.SymbolFromString(foobar)
+	ass.Equal(t, foobar, v.AsString())
+	ass.False(t, v.IsEmpty())
+	ass.Equal(t, 6, int(v.GetSize()))
+	ass.Equal(t, []rune("foobar"), v.AsArray())
+}
+
+var TagClass = ser.TagClass()
+
+func TestStringTags(t *tes.T) {
+	var size uti.Cardinal
+	for size = 8; size < 33; size++ {
+		var t1 = TagClass.TagWithSize(size)
+		ass.Equal(t, len(t1.AsString()), 1+int(mat.Ceil(float64(size)*8.0/5.0)))
+		var s1 = t1.AsString()
+		var t2 = TagClass.TagFromString(s1)
+		ass.Equal(t, t1, t2)
+		var s2 = t2.AsString()
+		ass.Equal(t, s1, s2)
+		ass.Equal(t, t1.AsArray(), t2.AsArray())
+	}
+}
+
+var VersionClass = ser.VersionClass()
+
+func TestVersion(t *tes.T) {
+	var v1 = VersionClass.VersionFromString("v1.2.3")
+	ass.Equal(t, "v1.2.3", v1.AsString())
+	ass.False(t, v1.IsEmpty())
+	ass.Equal(t, 3, int(v1.GetSize()))
+	ass.Equal(t, uti.Ordinal(1), v1.GetValue(1))
+	ass.Equal(t, uti.Ordinal(3), v1.GetValue(-1))
+	var v3 = VersionClass.VersionFromSequence(v1.GetValues(1, 2))
+	ass.Equal(t, "v1.2", v3.AsString())
+}
+
+func TestVersionsLibrary(t *tes.T) {
+	var v1 = VersionClass.Version([]uti.Ordinal{1})
+	var v2 = VersionClass.Version([]uti.Ordinal{2, 3})
+	var v3 = VersionClass.Concatenate(v1, v2)
+	ass.Equal(t, []uti.Ordinal{1, 2, 3}, v3.GetIntrinsic())
+
+	ass.False(t, VersionClass.IsValidNextVersion(v1, v1))
+	ass.Equal(t, "v2", VersionClass.GetNextVersion(v1, 0).AsString())
+	ass.Equal(t, "v2", VersionClass.GetNextVersion(v1, 1).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v1, VersionClass.GetNextVersion(v1, 1)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v1, 1), v1))
+	ass.Equal(t, "v1.1", VersionClass.GetNextVersion(v1, 2).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v1, VersionClass.GetNextVersion(v1, 2)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v1, 2), v1))
+	ass.Equal(t, "v1.1", VersionClass.GetNextVersion(v1, 3).AsString())
+
+	ass.False(t, VersionClass.IsValidNextVersion(v2, v2))
+	ass.Equal(t, "v3", VersionClass.GetNextVersion(v2, 1).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v2, VersionClass.GetNextVersion(v2, 1)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v2, 1), v2))
+	ass.Equal(t, "v2.4", VersionClass.GetNextVersion(v2, 0).AsString())
+	ass.Equal(t, "v2.4", VersionClass.GetNextVersion(v2, 2).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v2, VersionClass.GetNextVersion(v2, 2)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v2, 2), v2))
+	ass.Equal(t, "v2.3.1", VersionClass.GetNextVersion(v2, 3).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v2, VersionClass.GetNextVersion(v2, 3)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v2, 3), v2))
+
+	ass.False(t, VersionClass.IsValidNextVersion(v3, v3))
+	ass.Equal(t, "v2", VersionClass.GetNextVersion(v3, 1).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v3, VersionClass.GetNextVersion(v3, 1)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v3, 1), v3))
+	ass.Equal(t, "v1.3", VersionClass.GetNextVersion(v3, 2).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v3, VersionClass.GetNextVersion(v3, 2)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v3, 2), v3))
+	ass.Equal(t, "v1.2.4", VersionClass.GetNextVersion(v3, 0).AsString())
+	ass.Equal(t, "v1.2.4", VersionClass.GetNextVersion(v3, 3).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v3, VersionClass.GetNextVersion(v3, 3)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v3, 3), v3))
+	ass.Equal(t, "v1.2.3.1", VersionClass.GetNextVersion(v3, 4).AsString())
+	ass.True(t, VersionClass.IsValidNextVersion(v3, VersionClass.GetNextVersion(v3, 4)))
+	ass.False(t, VersionClass.IsValidNextVersion(VersionClass.GetNextVersion(v3, 4), v3))
 }

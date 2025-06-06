@@ -190,5 +190,5 @@ func tagClass() *tagClass_ {
 
 var tagClassReference_ = &tagClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:#(?:" + base32_ + ")+)"),
+	matcher_: reg.MustCompile("^(?:#((?:" + base32_ + ")+))"),
 }

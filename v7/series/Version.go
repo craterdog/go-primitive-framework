@@ -55,8 +55,8 @@ func (c *versionClass_) VersionFromString(
 		)
 		panic(message)
 	}
-	var version = matches[0]
-	var levels = sts.Split(version, "/")[1:] // Extract the ordinals.
+	var match = matches[1] // Remove the leading "v".
+	var levels = sts.Split(match, ".")
 	var ordinals = make([]uti.Ordinal, len(levels))
 	for index, level := range levels {
 		var ordinal, _ = stc.ParseUint(level, 10, 64)
@@ -155,9 +155,10 @@ func (v version_) GetIntrinsic() []uti.Ordinal {
 }
 
 func (v version_) AsString() string {
-	var string_ string
-	for _, ordinal := range v {
-		string_ += "/" + stc.Itoa(int(ordinal))
+	var index = 0
+	var string_ = "v" + stc.Itoa(int(v[index]))
+	for index++; index < len(v); index++ {
+		string_ += "." + stc.Itoa(int(v[index]))
 	}
 	return string_
 }
@@ -241,6 +242,6 @@ func versionClass() *versionClass_ {
 var versionClassReference_ = &versionClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"(?:v(?:" + ordinal_ + ")(\\.(?:" + ordinal_ + "))*)",
+		"(?:v((?:" + ordinal_ + ")(?:\\.(?:" + ordinal_ + "))*))",
 	),
 }
