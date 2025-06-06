@@ -63,7 +63,6 @@ func (c *probabilityClass_) ProbabilityFromString(
 	string_ string,
 ) ProbabilityLike {
 	var matches = c.matcher_.FindStringSubmatch(string_)
-	fmt.Printf("Probability: %q\n", matches)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the probability constructor method: %s",
@@ -236,7 +235,7 @@ func probabilityClass() *probabilityClass_ {
 
 var probabilityClassReference_ = &probabilityClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:p(0(?:" + fraction_ + ")?|1))"),
+	matcher_: reg.MustCompile("^p(0(?:" + fraction_ + ")?|1)"),
 	maximum_: probability_(1.0),
 	minimum_: probability_(0.0),
 }

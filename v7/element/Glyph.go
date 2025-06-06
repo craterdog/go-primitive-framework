@@ -130,8 +130,8 @@ func (v glyph_) String() string {
 const (
 	base16_  = base10_ + "|[a-f]"
 	control_ = "\\p{Cc}"
-	escape_  = "\\\\(?:(?:" + unicode_ + ")|[abfnrtv\\\\])"
-	unicode_ = "(?:u(?:" + base16_ + "){4})|(?:U(?:" + base16_ + "){8})"
+	escape_  = "\\\\" + unicode_ + "|[abfnrtv\\\\]"
+	unicode_ = "u(?:" + base16_ + "){4}|U(?:" + base16_ + "){8}"
 )
 
 // Instance Structure

@@ -19,7 +19,6 @@ import (
 	cmp "math/cmplx"
 	reg "regexp"
 	stc "strconv"
-	//sts "strings"
 )
 
 // CLASS INTERFACE
@@ -619,7 +618,7 @@ const (
 	exponent_       = "E(?:" + sign_ + ")?" + ordinal_
 	float_          = "(?:" + sign_ + ")?" + amplitude_
 	fraction_       = "\\.(?:" + base10_ + ")+"
-	imaginary_      = "(?:" + float_ + ")i"
+	imaginary_      = float_ + "i"
 	infinity_       = "(?:" + sign_ + ")?(?:infinity|∞)"
 	ordinal_        = "[1-9](?:" + base10_ + ")*"
 	polar_          = "(" + amplitude_ + ")e\\^(?:~(0|" + amplitude_ + "))?i"

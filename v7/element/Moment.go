@@ -344,7 +344,7 @@ const (
 	minute_ = "[0-5][0-9]"
 	month_  = "0[1-9]|1[0-2]"
 	second_ = "[0-5][0-9]|6[0-1]"
-	year_   = "0|(?:" + ordinal_ + ")"
+	year_   = "0|" + ordinal_
 )
 
 // Instance Structure

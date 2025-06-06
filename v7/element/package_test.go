@@ -734,6 +734,7 @@ func TestStringPercentages(t *tes.T) {
 	ass.Equal(t, -1.0, v.GetIntrinsic())
 	ass.Equal(t, -100, v.AsInteger())
 	ass.Equal(t, -100.0, v.AsFloat())
+	ass.Equal(t, "-100%", v.AsString())
 }
 
 var ProbabilityClass = ele.ProbabilityClass()
@@ -758,6 +759,23 @@ func TestOneProbabilities(t *tes.T) {
 
 func TestRandomProbabilities(t *tes.T) {
 	ProbabilityClass.Random()
+}
+
+func TestStringProbabilities(t *tes.T) {
+	var v = ProbabilityClass.ProbabilityFromString("p0")
+	ass.Equal(t, 0.0, v.GetIntrinsic())
+	ass.Equal(t, 0.0, v.AsFloat())
+	ass.Equal(t, "p0", v.AsString())
+
+	v = ProbabilityClass.ProbabilityFromString("p0.5")
+	ass.Equal(t, 0.5, v.GetIntrinsic())
+	ass.Equal(t, 0.5, v.AsFloat())
+	ass.Equal(t, "p0.5", v.AsString())
+
+	v = ProbabilityClass.ProbabilityFromString("p1")
+	ass.Equal(t, 1.0, v.GetIntrinsic())
+	ass.Equal(t, 1.0, v.AsFloat())
+	ass.Equal(t, "p1", v.AsString())
 }
 
 func TestOtherProbabilities(t *tes.T) {
