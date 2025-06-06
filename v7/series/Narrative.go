@@ -192,6 +192,6 @@ func narrativeClass() *narrativeClass_ {
 var narrativeClassReference_ = &narrativeClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:\">((?:" + any_ + "|" + eol_ + ")*?)<\")",
+		"^\">((?:" + any_ + "|" + eol_ + ")*?)<\"",
 	),
 }

@@ -275,10 +275,10 @@ func (v binary_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	alpha_        = "(?:[A-Za-z])"
-	alphanumeric_ = "(?:(?:" + alpha_ + ")|(?:" + base10_ + "))"
-	base10_       = "(?:[0-9])"
-	base64_       = "(?:(?:" + alphanumeric_ + ")|[\\+/])"
+	alpha_        = "[A-Za-z]"
+	alphanumeric_ = alpha_ + "|" + base10_
+	base10_       = "[0-9]"
+	base64_       = alphanumeric_ + "|[\\+/]"
 )
 
 // Instance Structure
@@ -301,6 +301,6 @@ func binaryClass() *binaryClass_ {
 var binaryClassReference_ = &binaryClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:'>((?:(?:" + base64_ + ")|(?:" + space_ + ")|" + eol_ + ")*)<')",
+		"^'>((?:" + base64_ + "|" + space_ + "|" + eol_ + ")*)<'",
 	),
 }

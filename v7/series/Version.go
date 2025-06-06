@@ -219,7 +219,7 @@ func (v version_) String() string {
 // each version to lessen the chance of a version collision with other private Go
 // class constants in this package.
 const (
-	ordinal_ = "(?:[1-9](?:" + base10_ + ")*)"
+	ordinal_ = "[1-9](?:" + base10_ + ")*"
 )
 
 // Instance Structure
@@ -242,6 +242,6 @@ func versionClass() *versionClass_ {
 var versionClassReference_ = &versionClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:v((?:" + ordinal_ + ")(?:\\.(?:" + ordinal_ + "))*))",
+		"^v(" + ordinal_ + "(?:\\." + ordinal_ + ")*)",
 	),
 }

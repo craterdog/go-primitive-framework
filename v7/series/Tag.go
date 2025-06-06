@@ -168,7 +168,7 @@ func (v tag_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	base32_ = "(?:(?:" + base10_ + ")|[A-DF-HJ-NP-TV-Z])"
+	base32_ = base10_ + "|[A-DF-HJ-NP-TV-Z]"
 )
 
 // Instance Structure
@@ -190,5 +190,5 @@ func tagClass() *tagClass_ {
 
 var tagClassReference_ = &tagClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:#((?:" + base32_ + ")+))"),
+	matcher_: reg.MustCompile("^#((?:" + base32_ + ")+)"),
 }

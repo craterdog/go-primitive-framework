@@ -138,10 +138,10 @@ func (v quote_) String() string {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	character_ = "(?:(?:" + escape_ + ")|\\\\\"|[^\"" + control_ + "])"
-	escape_    = "(?:\\\\(?:(?:" + unicode_ + ")|[abfnrtv\\\\]))"
-	unicode_   = "(?:(?:u(?:" + base16_ + "){4})|(?:U(?:" + base16_ + "){8}))"
+	character_ = escape_ + "|\\\\\"|[^\"" + control_ + "]"
 	control_   = "\\p{Cc}"
+	escape_    = "\\\\(?:" + unicode_ + "|[abfnrtv\\\\])"
+	unicode_   = "u(?:" + base16_ + "){4}|U(?:" + base16_ + "){8}"
 )
 
 // Instance Structure
@@ -163,5 +163,5 @@ func quoteClass() *quoteClass_ {
 
 var quoteClassReference_ = &quoteClass_{
 	// Initialize the class constants.
-	matcher_: reg.MustCompile("^(?:\"((?:" + character_ + ")*)\")"),
+	matcher_: reg.MustCompile("^\"((?:" + character_ + ")*)\""),
 }
