@@ -40,7 +40,7 @@ func (c *citationClass_) Citation(
 		)
 		panic(message)
 	}
-	return citation_(string_)
+	return citation_(matches[0])
 }
 
 // Constant Methods

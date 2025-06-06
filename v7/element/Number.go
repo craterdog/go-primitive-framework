@@ -424,13 +424,13 @@ func (v number_) AsString() string {
 		case imagPart == 0:
 			string_ = numberClass().stringFromFloat(realPart)
 		case realPart == 0:
-			string_ = numberClass().stringFromImaginary(imagPart)
+			string_ = numberClass().stringFromFloat(imagPart) + "i"
 		default:
 			string_ += numberClass().stringFromFloat(realPart)
-			if imagPart >= 0 {
+			if imagPart > 0 {
 				string_ += "+"
 			}
-			string_ += numberClass().stringFromImaginary(imagPart)
+			string_ += numberClass().stringFromFloat(imagPart) + "i"
 		}
 	}
 	return string_
@@ -600,19 +600,6 @@ func (c *numberClass_) stringFromFloat(float float64) string {
 		string_ = "undefined"
 	default:
 		string_ = stc.FormatFloat(float, 'G', -1, 64)
-	}
-	return string_
-}
-
-func (c *numberClass_) stringFromImaginary(imaginary float64) string {
-	var string_ string
-	switch imaginary {
-	case 1:
-		string_ = "i"
-	case -1:
-		string_ = "-i"
-	default:
-		string_ = c.stringFromFloat(imaginary) + "i"
 	}
 	return string_
 }

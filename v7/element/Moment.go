@@ -42,7 +42,6 @@ func (c *momentClass_) MomentFromString(
 	string_ string,
 ) MomentLike {
 	var matches = c.matcher_.FindStringSubmatch(string_)
-	fmt.Printf("Moment: %q\n", matches)
 	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the moment constructor method: %s",
@@ -271,20 +270,20 @@ func (c *momentClass_) formatOrdinal(ordinal int, digits int) string {
 //
 // Anyway, it is what it is, but this hides it from the rest of the code.
 var hackedIsoFormats_ = [...]string{
-	"<2006-01-02T15:04:05.000>",
-	"<2006-01-02T15:04:05>",
-	"<2006-01-02T15:04>",
-	"<2006-01-02T15>",
-	"<2006-01-02>",
-	"<2006-01>",
-	"<2006>",
-	"<-2006>",
-	"<-2006-01>",
-	"<-2006-01-02>",
-	"<-2006-01-02T15>",
-	"<-2006-01-02T15:04>",
-	"<-2006-01-02T15:04:05>",
-	"<-2006-01-02T15:04:05.000>",
+	"2006-01-02T15:04:05.000",
+	"2006-01-02T15:04:05",
+	"2006-01-02T15:04",
+	"2006-01-02T15",
+	"2006-01-02",
+	"2006-01",
+	"2006",
+	"-2006",
+	"-2006-01",
+	"-2006-01-02",
+	"-2006-01-02T15",
+	"-2006-01-02T15:04",
+	"-2006-01-02T15:04:05",
+	"-2006-01-02T15:04:05.000",
 }
 
 // The Go time.Parse() function can only handle years in the range [0000..9999]
@@ -296,11 +295,11 @@ var hackedIsoFormats_ = [...]string{
 //
 //	https://en.wikipedia.org/wiki/Holocene_calendar#Conversion
 //
-// So we must resort to some hacking with this private function...
+// we must resort to some hacking with this private function...
 func (c *momentClass_) momentFromMatches(matches []string) int {
 	// First, we replace the year with year zero.
-	var yearString = matches[2]
-	var patched = sts.Replace(matches[0], yearString, "0000", 1)
+	var yearString = matches[3]
+	var patched = sts.Replace(matches[1], yearString, "0000", 1)
 
 	// Next, we attempt to parse the patched moment using our Go based formats.
 	for _, format := range hackedIsoFormats_ {
@@ -310,7 +309,7 @@ func (c *momentClass_) momentFromMatches(matches []string) int {
 			// We found a match, now we add back in the correct year.
 			var year, _ = stc.ParseInt(yearString, 10, 64)
 			date = date.AddDate(int(year), 0, 0)
-			if sts.HasPrefix(format, "<-") {
+			if sts.HasPrefix(format, "-") {
 
 				// We change the positive date to a negative one.
 				date = date.AddDate(-2*date.Year(), 0, 0)
@@ -322,9 +321,9 @@ func (c *momentClass_) momentFromMatches(matches []string) int {
 		}
 	}
 
-	// This panic will only happen if the scanner regular expressions are out
-	// of sync with the ISO 8601 standard formats. The moment has already been
-	// succussfully scanned by the the scanner.
+	// This panic will only happen if the regular expressions are out of sync
+	// with the ISO 8601 standard formats. The moment has already been matched
+	// succussfully.
 	panic(fmt.Sprintf("The moment does not match a known format: %v", matches[0]))
 }
 
@@ -340,12 +339,12 @@ func (v moment_) asTime() tim.Time {
 // each name to lessen the chance of a name collision with other private Go
 // class constants in this package.
 const (
-	day_    = "(?:([0-2][1-9])|(3[0-1]))"
-	hour_   = "(?:([0-1][0-9])|(2[0-3]))"
-	minute_ = "(?:[0-5][0-9])"
-	month_  = "(?:(0[1-9])|(1[0-2]))"
-	second_ = "(?:([0-5][0-9])|(6[0-1]))"
-	year_   = "(?:0|(?:" + ordinal_ + "))"
+	day_    = "[0-2][1-9]|3[0-1]"
+	hour_   = "[0-1][0-9]|2[0-3]"
+	minute_ = "[0-5][0-9]"
+	month_  = "0[1-9]|1[0-2]"
+	second_ = "[0-5][0-9]|6[0-1]"
+	year_   = "0|(?:" + ordinal_ + ")"
 )
 
 // Instance Structure
@@ -371,9 +370,9 @@ func momentClass() *momentClass_ {
 var momentClassReference_ = &momentClass_{
 	// Initialize the class constants.
 	matcher_: reg.MustCompile(
-		"^(?:<(?:" + sign_ + ")?(?:" + year_ + ")(-(?:" + month_ + ")(-(?:" +
-			day_ + ")(T(?:" + hour_ + ")(:(?:" + minute_ + ")(:(?:" + second_ +
-			")(?:" + fraction_ + ")?)?)?)?)?)?>)",
+		"^<((" + sign_ + ")?(" + year_ + ")(?:-(" + month_ + ")(?:-(" + day_ +
+			")(?:T(" + hour_ + ")(?::(" + minute_ + ")(:(?:" + second_ +
+			")(?:" + fraction_ + ")?)?)?)?)?)?)>",
 	),
 	minimum_: moment_(mat.MinInt),
 	maximum_: moment_(mat.MaxInt),

@@ -24,6 +24,7 @@ var AngleClass = ele.AngleClass()
 
 func TestZeroAngles(t *tes.T) {
 	var v = AngleClass.Angle(0)
+	ass.Equal(t, 0.0, v.GetIntrinsic())
 	ass.Equal(t, 0.0, v.AsFloat())
 
 	v = AngleClass.AngleFromString("~0")
@@ -110,6 +111,8 @@ func TestFalseBooleans(t *tes.T) {
 	ass.False(t, BooleanClass.False().GetIntrinsic())
 	var v = BooleanClass.Boolean(false)
 	ass.False(t, v.AsBoolean())
+	v = BooleanClass.BooleanFromString("false")
+	ass.Equal(t, "false", v.AsString())
 }
 
 func TestTrueBooleans(t *tes.T) {
@@ -117,6 +120,8 @@ func TestTrueBooleans(t *tes.T) {
 	ass.True(t, BooleanClass.True().GetIntrinsic())
 	var v = BooleanClass.Boolean(true)
 	ass.True(t, v.AsBoolean())
+	v = BooleanClass.BooleanFromString("true")
+	ass.Equal(t, "true", v.AsString())
 }
 
 func TestBooleansLibrary(t *tes.T) {
@@ -168,6 +173,7 @@ var CitationClass = ele.CitationClass()
 
 func TestCitation(t *tes.T) {
 	var v1 = CitationClass.Citation("/bali/types/abstractions/String@v1.2.3")
+	ass.Equal(t, "/bali/types/abstractions/String@v1.2.3", v1.GetIntrinsic())
 	ass.Equal(t, "/bali/types/abstractions/String@v1.2.3", v1.AsString())
 	ass.Equal(t, "/bali/types/abstractions/String", v1.GetName())
 	ass.Equal(t, "v1.2.3", v1.GetVersion())
@@ -179,6 +185,7 @@ func TestZeroDurations(t *tes.T) {
 	var v = DurationClass.Duration(0)
 	ass.Equal(t, 0, v.AsInteger())
 	ass.False(t, v.IsNegative())
+	ass.Equal(t, 0, v.GetIntrinsic())
 	ass.Equal(t, 0.0, v.AsMilliseconds())
 	ass.Equal(t, 0.0, v.AsSeconds())
 	ass.Equal(t, 0.0, v.AsMinutes())
@@ -206,8 +213,10 @@ func TestStringDurations(t *tes.T) {
 
 func TestPositiveDurations(t *tes.T) {
 	var v = DurationClass.Duration(60000)
+	ass.Equal(t, "~PT1M", v.AsString())
 	ass.Equal(t, 60000, v.AsInteger())
 	ass.False(t, v.IsNegative())
+	ass.Equal(t, 60000, v.GetIntrinsic())
 	ass.Equal(t, 60000.0, v.AsMilliseconds())
 	ass.Equal(t, 60.0, v.AsSeconds())
 	ass.Equal(t, 1.0, v.AsMinutes())
@@ -283,6 +292,7 @@ var MomentClass = ele.MomentClass()
 
 func TestIntegerMoments(t *tes.T) {
 	var v = MomentClass.Moment(1238589296789)
+	ass.Equal(t, 1238589296789, v.GetIntrinsic())
 	ass.Equal(t, 1238589296789, v.AsInteger())
 	ass.Equal(t, 1238589296789.0, v.AsMilliseconds())
 	ass.Equal(t, 1238589296.789, v.AsSeconds())
@@ -300,6 +310,11 @@ func TestIntegerMoments(t *tes.T) {
 	ass.Equal(t, 14, v.GetWeeks())
 	ass.Equal(t, 4, v.GetMonths())
 	ass.Equal(t, 2009, v.GetYears())
+}
+
+func TestStringMoments(t *tes.T) {
+	var v = MomentClass.MomentFromString("<-1-02-03T04:05:06.700>")
+	ass.Equal(t, "<-1-02-03T04:05:06.700>", v.AsString())
 }
 
 func TestMomentsLibrary(t *tes.T) {
@@ -401,6 +416,7 @@ func TestNumberFromString(t *tes.T) {
 	var v = NumberClass.NumberFromString("1e^~πi")
 	ass.Equal(t, -1.0+0i, v.GetIntrinsic())
 	ass.True(t, v.IsNegative())
+	ass.Equal(t, "-1", v.AsString())
 	ass.Equal(t, -1.0, v.AsFloat())
 	ass.Equal(t, -1.0, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
@@ -408,30 +424,37 @@ func TestNumberFromString(t *tes.T) {
 	ass.Equal(t, mat.Pi, v.GetPhase())
 
 	v = NumberClass.NumberFromString("-1.2-3.4i")
+	ass.Equal(t, "-1.2-3.4i", v.AsString())
 	ass.Equal(t, -1.2, v.GetReal())
 	ass.Equal(t, -3.4, v.GetImaginary())
 
 	v = NumberClass.NumberFromString("undefined")
+	ass.Equal(t, "undefined", v.AsString())
 	ass.True(t, v.IsUndefined())
 	ass.False(t, v.HasMagnitude())
 
 	v = NumberClass.NumberFromString("+infinity")
+	ass.Equal(t, "∞", v.AsString())
 	ass.True(t, v.IsInfinite())
 	ass.False(t, v.HasMagnitude())
 
 	v = NumberClass.NumberFromString("infinity")
+	ass.Equal(t, "∞", v.AsString())
 	ass.True(t, v.IsInfinite())
 	ass.False(t, v.HasMagnitude())
 
 	v = NumberClass.NumberFromString("∞")
+	ass.Equal(t, "∞", v.AsString())
 	ass.True(t, v.IsInfinite())
 	ass.False(t, v.HasMagnitude())
 
 	v = NumberClass.NumberFromString("-∞")
+	ass.Equal(t, "∞", v.AsString())
 	ass.True(t, v.IsInfinite())
 	ass.False(t, v.HasMagnitude())
 
 	v = NumberClass.NumberFromString("+1")
+	ass.Equal(t, "1", v.AsString())
 	ass.Equal(t, 1.0, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
 	ass.Equal(t, 1.0, v.GetMagnitude())
@@ -440,6 +463,7 @@ func TestNumberFromString(t *tes.T) {
 	ass.False(t, v.IsNegative())
 
 	v = NumberClass.NumberFromString("1")
+	ass.Equal(t, "1", v.AsString())
 	ass.Equal(t, 1.0, v.GetReal())
 	ass.Equal(t, 0.0, v.GetImaginary())
 	ass.Equal(t, 1.0, v.GetMagnitude())
@@ -448,12 +472,14 @@ func TestNumberFromString(t *tes.T) {
 	ass.False(t, v.IsNegative())
 
 	v = NumberClass.NumberFromString("-π")
+	ass.Equal(t, "-π", v.AsString())
 	ass.Equal(t, -mat.Pi, v.GetReal())
 	ass.Equal(t, mat.Pi, v.GetPhase())
 	ass.True(t, v.HasMagnitude())
 	ass.True(t, v.IsNegative())
 
 	v = NumberClass.NumberFromString("+1i")
+	ass.Equal(t, "1i", v.AsString())
 	ass.Equal(t, 0.0, v.GetReal())
 	ass.Equal(t, 1.0, v.GetImaginary())
 	ass.Equal(t, 1.0, v.GetMagnitude())
@@ -462,6 +488,7 @@ func TestNumberFromString(t *tes.T) {
 	ass.False(t, v.IsNegative())
 
 	v = NumberClass.NumberFromString("1i")
+	ass.Equal(t, "1i", v.AsString())
 	ass.Equal(t, 0.0, v.GetReal())
 	ass.Equal(t, 1.0, v.GetImaginary())
 	ass.Equal(t, 1.0, v.GetMagnitude())
@@ -470,6 +497,7 @@ func TestNumberFromString(t *tes.T) {
 	ass.False(t, v.IsNegative())
 
 	v = NumberClass.NumberFromString("-1i")
+	ass.Equal(t, "-1i", v.AsString())
 	ass.Equal(t, 0.0, v.GetReal())
 	ass.Equal(t, -1.0, v.GetImaginary())
 	ass.Equal(t, 1.0, v.GetMagnitude())

@@ -14,6 +14,7 @@ package element
 
 import (
 	fmt "fmt"
+	uti "github.com/craterdog/go-missing-utilities/v7"
 	reg "regexp"
 	stc "strconv"
 )
@@ -38,14 +39,15 @@ func (c *booleanClass_) BooleanFromString(
 	string_ string,
 ) BooleanLike {
 	// Our booleans are more restrictive than the Go strconv package.
-	if !c.matcher_.MatchString(string_) {
+	var matches = c.matcher_.FindStringSubmatch(string_)
+	if uti.IsUndefined(matches) {
 		var message = fmt.Sprintf(
 			"An illegal string was passed to the boolean constructor method: %s",
 			string_,
 		)
 		panic(message)
 	}
-	var boolean, _ = stc.ParseBool(string_)
+	var boolean, _ = stc.ParseBool(matches[0])
 	return boolean_(boolean)
 }
 
